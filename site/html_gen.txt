@@ -1,0 +1,4 @@
+<html><head><link rel="stylesheet" href="style.css"></head>
+				<body>
+				<h id=museyhead>museyroom album / track1 / style.css /  </h> <br>
+				 <a href="/replace/track1/style.css" style="text-decoration: none;">replace</a> | <a href="/dwnzip/track1/style.css" style="text-decoration: none;">download</a> | <a href="/addAudio/track1/style.css" style="text-decoration: none;">add audio</a> | <a href="/addPTX/track1/style.css"  style="text-decoration: none;">add ptx</a></ol></body></html>
