@@ -18,13 +18,13 @@ class HTMLwriter(object):
 				''' % loc
 
 	def proToolsLinks(self, user, loc):
-		return (' <a href="/replace/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
-					+ '<a href="/dwnzip/' + loc + '" style="text-decoration: none;">download</a>' + ' | '
-					+ '<a href="/addAudio/'+ loc + '" style="text-decoration: none;">add audio</a>' + ' | '
-					+ '<a href="/addPTX/' + loc + '"  style="text-decoration: none;">add ptx</a>')
+		return (' <a title="replace this directory with a zip file" href="/replace/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
+					+ '<a title="compress this directory into a .zip file, may take a while" href="/mkzip/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
+					+ '<a title="upload new audio instead of replacing the entire directory" href="/addAudio/'+ loc + '" style="text-decoration: none;">add audio</a>' + ' | '
+					+ '<a title="upload a new ptf or ptx file" href="/addPTX/' + loc + '"  style="text-decoration: none;">add ptx</a>')
 		
 	def addSong(self, user):
-		return ('<br><a href="/addSong/' + user + '" style="text-decoration: none;">add song</a>')		
+		return ('<br><a href="/addSong" style="text-decoration: none;">add song</a>')		
 	
 	def uploadSongZip(self, loc):
 		return ('''<h>replace pro tools session</h>
@@ -37,10 +37,21 @@ class HTMLwriter(object):
 				</form>
 				''' % loc)
 
+	def uploadNewSongZip(self):
+		return ('''<h>Add Song</h>
+				<p>Upload a compressed .zip file of the entire Pro Tools Session
+				directory</p>
+				<form action="/addSong" method="post"
+				enctype="multipart/form-data"> <small>
+				<input type="file" name="upload" />
+				<input type="submit" value="Upload" /> </small>
+				</form>
+				''')		
+
 	def uploadPTX(self, loc):
 		return ('''<h>add pro tools session file (ptx/ptf)</h>
 				<p>if the ptx/ptf matches the name of an existing file it will be replaced in the top of the directory
-				and the previous version will be moved to SessionBackups</p>
+				and the previous version will be moved to Session File Backups</p>
 				<form action="/addPTX/%s" method="post"
 				enctype="multipart/form-data"> <small>
 				<input type="file" name="upload" />
@@ -69,6 +80,18 @@ class HTMLwriter(object):
 				<a href= /about > about  </a> </small>
 				'''
 
+	def folderLinksFooter(self, user): 
+		return '''<small> <a href= /%s > go up </a>
+				&nbsp;|&nbsp;
+				<a href= /addSong> add song </a>
+				&nbsp;|&nbsp;
+				<a href= /logout > logout </a> </small>
+				''' % user
+
+	about = loginForm + '''<html> <small> <p> This is a private server hosted by matthew coppola. <br>
+                I can be reached at mcoppola832@gmail.com  &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small> </html>'''
+
+	addUser = loginForm + '''<html> <small> <p>feature not available, contact me at mcoppola832@gmail.com &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small> </html>'''
 
 	# museyHeader = '''<html><head><link rel="stylesheet" href="style.css"></head>
 	# 			<body>

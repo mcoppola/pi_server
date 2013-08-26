@@ -1,9 +1,10 @@
 # Matthew Coppola
 # server code for raspberry pi 0.1
+# implementation for museyroom album pro tools session repository
 import os, time, shutil, zipfile, datetime
 from bottle import route, run, request, redirect, FlupFCGIServer, static_file
 from HTMLwriter import HTMLwriter
-from util import zipdir, formatLoc
+from util import zipdir, formatLoc, unzip, unzipReplace
 
 
 @route('/', method='GET')
@@ -28,27 +29,42 @@ def do_login():
 			else:
 				return 'Wrong password.  Press back to try again'
 		else:
-			count+=1 
+			count+=1
+
+@route('/logout')
+def logout():
+	global loggedIn, loc
+	loggedIn = ''
+	loc = ''
+	redirect('/')
+
+@route('/about')
+def about():
+	return html.about
+
+@route('/master')
+def about():
+	return html.addUser
 
 @route('/mc', method='GET')
 def mcHome():
-	checkLogin()
+	checkLogin('mc')
 	return 'welcome matthew'
 
 @route('/museyroom', method='GET')
 def museyroom():
-	checkLogin()
+	checkLogin('museyroom')
 	return printProToolsDirectory('')
 
 @route('/museyroom/<loc>', method='GET')
 def museyroomLoc(loc):
-	checkLogin()
-	return  printProToolsDirectory(str(loc))
+	checkLogin('museyroom')
+	return  printProToolsDirectory(str(loc)) 
 
 #hack (FIX)
 @route('/museyroom/<loc>/<loc2>', method='GET')
 def museyroomHack(loc, loc2):
-	checkLogin()
+	checkLogin('museyroom')
 	return  printProToolsDirectory(str(loc + '/' + loc2))
 
 
@@ -72,66 +88,83 @@ def printProToolsDirectory(loc):
 			count = count + 1
 			size = os.path.getsize('data/' + user + '/' + loc + '/' + f)
 			date = time.ctime(os.path.getmtime('data/' + user + '/' + loc + '/' + f))
-			fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">'
-				+ f + '</a>' + ' | '
-				+ str(size) + ' bytes' +  ' | '
-				+ str(date) + '</li>' + '\n')
+
+			if f.endswith('.ptx'):
+				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">' + '<font color="#66CCFF">'
+					+ f + '</a></font>' + ' | '
+					+ str(size) + ' bytes' +  ' | '
+					+ str(date) + '</li>' + '\n')
+			elif f.endswith('.ptf'):
+				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">' + '<font color="#6699FF">'
+					+ f + '</a></font>' + ' | '
+					+ str(size) + ' bytes' +  ' | '
+					+ str(date) + '</li>' + '\n')
+			elif f.endswith('.zip'):
+				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">' + '<font color="#00CC99">'
+					+ f + '</a></font>' + ' | '
+					+ str(size) + ' bytes' +  ' | '
+					+ str(date) + '</li>' + '\n')
+			else:
+				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">'
+					+ f + '</a>' + ' | '
+					+ str(size) + ' bytes' +  ' | '
+					+ str(date) + '</li>' + '\n')
 		break
 
-	if(loc == ''):
-		fl.write(html.addSong(user))
-	fl.write(html.museyFooter)
+	fl.write(html.museyFooter + html.folderLinksFooter(user))
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
 
 @route('/replace/<loc>')
 def replace(loc):
-	checkLogin()
 	global user
+	checkLogin(user)
 	return html.uploadSongZip(loc)
 
 @route('/replace/<loc>', method='POST')
 def doReplace(loc):
-	checkLogin()
 	global user
+	checkLogin(user)
 	upload = request.files.get('upload')
 	if(upload.filename and upload.filename.endswith('.zip')):
 		fn = os.path.basename(upload.filename)
 		open('data/' + user + '/' + fn, 'w').write(upload.file.read())
 		print 'file %s was upload' % fn
 		#move directory to _previous
-		shutil.move('data/' + user + '/' + loc + '/.', 'data/' + user + '/_previous/' + loc + '/')
+		try:
+			shutil.move('data/' + user + '/' + loc + '/', 'data/' + user + '/_previous/')
+		except:
+			shutil.rmtree('data/' + user + '/_previous/' + loc + '/')
+			shutil.move('data/' + user + '/' + loc + '/', 'data/' + user + '/_previous/' + loc + '/')
 		#zip directory 
-		zfile = zipfile.ZipFile('data/' + user + '/' + fn, 'r')
-		print zfile.getinfo()
-		for name in zfile.namelist():
-			(dirname, filename) = os.path.split(name)
-			print "Decompressing " + filename + " on " + dirname
-			if not os.path.exists(dirname):
-				os.mkdir(dirname)
-			fd = open('data/' + user + '/' + name,"wb")
-			fd.write(file.read(name))
-			fd.close()
+		(dirName, fileName) = fn.split('.')
+		if not os.path.exists('data/' + user + '/' + dirName):
+			os.mkdir('data/' + user + '/' + dirName)
+		unzip('data/' + user + '/' + fn, 'data/' + user + '/' + dirName)
+		os.remove('data/' + user + '/' + fn)
+		redirect('/' + user + '/' + dirName)
+	else:
+		return 'error, directory was not replaced'	
 
-@route('/dwnzip/<loc>')
-def downloadZip(loc):
-	checkLogin()
+@route('/mkzip/<loc>')
+def makeZip(loc):
 	global user
+	checkLogin(user)
 	#make zip of directory
-	zipdir(loc, 'data/' + user + '/' + loc)
-	return static_file(loc + '.zip', root=('/'), download=(loc+'.zip'))
+	zipdir('data/' + user + '/' + loc + '/' + loc + '.zip', 'data/' + user + '/' + loc)
+	redirect ('/' + user + '/' + loc)
 
 @route('/addPTX/<loc>')
 def addPTX(loc):
-	checkLogin()
 	global user
+	checkLogin(user)
 	return html.uploadPTX(loc)
 
 @route('/addPTX/<loc>', method='POST')
 def doAddPTX(loc):
-	checkLogin()
 	global user
+	checkLogin(user)
 	upload = request.files.get('upload')
 	if upload.filename:
 		fn = os.path.basename(upload.filename)
@@ -141,7 +174,7 @@ def doAddPTX(loc):
 		try:
 			split = fn.split('.')
 			newName = split[0] + "_" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + split[1]
-			shutil.move('data/' + user + '/' + loc + '/' + fn, 'data/' + user + '/' + loc + '/sessionbackups/' + newName)
+			shutil.move('data/' + user + '/' + loc + '/' + fn, 'data/' + user + '/' + loc + '/Session File Backups/' + newName)
 			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
 			redirect('/' + user + '/' + loc)
 		except:
@@ -150,11 +183,39 @@ def doAddPTX(loc):
 		#write new session file
 	return 'no file was uploaded'
 
+@route('/addSong')
+def addSong():
+	global user
+	checkLogin(user)
+	return html.uploadNewSongZip()
+
+@route('/addSong', method='POST')
+def doAddSong():
+	global user
+	checkLogin(user)
+	upload = request.files.get('upload')
+	if upload.filename:
+		fn = os.path.basename(upload.filename)
+		if not fn.endswith('.zip'):
+			return 'please choose a .zip file'
+
+		open('data/' + user + '/' + fn, 'wb').write(upload.file.read())
+		(dirName, fileName) = fn.split('.')
+		if not os.path.exists('data/' + user + '/' + dirName):
+			os.mkdir('data/' + user + '/' + dirName)
+		unzip('data/' + user + '/' + fn, 'data/' + user + '/' + dirName)
+		os.remove('data/' + user + '/' + fn)
+		redirect('/' + user)
+
+@route('/addAudio/<loc>')
+def addAudio(loc):
+	return 'comming soon'
+
 #download html link for files in current directory
 @route('/down/<loc>/<num>')
 def download(loc, num):
-	checkLogin()
 	global user
+	checkLogin(user)
 	num = int(num) - 1
 	files = [f for f in os.listdir('data/' + user + '/' + loc) 
 		if os.path.isfile('data/' + user + '/' + loc + '/' + f)]
@@ -164,8 +225,8 @@ def download(loc, num):
 #hack FIX 
 @route('/down/<loc>/<loc2>/<num>')
 def downloadHACK(loc, loc2, num):
-	checkLogin()
 	global user
+	checkLogin(user)
 	loc = loc+'/'+loc2
 	num = int(num) - 1
 	files = [f for f in os.listdir('data/' + user + '/' + loc) 
@@ -174,7 +235,7 @@ def downloadHACK(loc, loc2, num):
 	return static_file(fn, root=('data/' + user + '/' + loc), download=fn)
 
 
-def checkLogin():
+def checkLogin(user = 'null'):
 	if (loggedIn != user):
 		redirect('/login')
 
