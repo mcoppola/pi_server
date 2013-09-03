@@ -60,7 +60,7 @@ def unzipReplace(zipFilePath, destDir):
     zfile.close()
 
 def zipper(dir, zip_file):
-	zip = zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_DEFLATED)
+	zip = zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_STORED)
 	root_len = len(os.path.abspath(dir))
 	for root, dirs, files in os.walk(dir):
 		archive_root = os.path.abspath(root)[root_len:]

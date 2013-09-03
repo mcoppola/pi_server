@@ -126,6 +126,7 @@ def replace(loc):
 def doReplace(loc):
 	global user
 	checkLogin(user)
+	checkAccess()
 	upload = request.files.get('upload')
 	if(upload.filename and upload.filename.endswith('.zip')):
 		fn = os.path.basename(upload.filename)
@@ -151,6 +152,7 @@ def doReplace(loc):
 def makeZip(loc):
 	global user
 	checkLogin(user)
+	checkAccess()
 	#make zip of directory
 	zipdir('data/' + user + '/' + loc + '/' + loc + '.zip', 'data/' + user + '/' + loc)
 	redirect ('/' + user + '/' + loc)
@@ -165,22 +167,23 @@ def addPTX(loc):
 def doAddPTX(loc):
 	global user
 	checkLogin(user)
+	checkAccess()
 	upload = request.files.get('upload')
 	if upload.filename:
 		fn = os.path.basename(upload.filename)
 		if not fn.endswith('.ptx') and not fn.endswith('.ptf'):
 			return 'please choose a ptx or ptf file'
-		#move existing session file
 		try:
+			#move existing session file
 			split = fn.split('.')
 			newName = split[0] + "_" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + split[1]
 			shutil.move('data/' + user + '/' + loc + '/' + fn, 'data/' + user + '/' + loc + '/Session File Backups/' + newName)
+			#write new session file
 			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
 			redirect('/' + user + '/' + loc)
 		except:
 			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
 			redirect('/' + user + '/' + loc)
-		#write new session file
 	return 'no file was uploaded'
 
 @route('/addSong')
@@ -193,6 +196,7 @@ def addSong():
 def doAddSong():
 	global user
 	checkLogin(user)
+	checkAccess()
 	upload = request.files.get('upload')
 	if upload.filename:
 		fn = os.path.basename(upload.filename)
@@ -216,6 +220,7 @@ def addAudio(loc):
 def download(loc, num):
 	global user
 	checkLogin(user)
+	checkAccess()
 	num = int(num) - 1
 	files = [f for f in os.listdir('data/' + user + '/' + loc) 
 		if os.path.isfile('data/' + user + '/' + loc + '/' + f)]
@@ -227,6 +232,7 @@ def download(loc, num):
 def downloadHACK(loc, loc2, num):
 	global user
 	checkLogin(user)
+	checkAccess()
 	loc = loc+'/'+loc2
 	num = int(num) - 1
 	files = [f for f in os.listdir('data/' + user + '/' + loc) 
@@ -234,16 +240,40 @@ def downloadHACK(loc, loc2, num):
 	fn = files[num]
 	return static_file(fn, root=('data/' + user + '/' + loc), download=fn)
 
+@route('/ptkeeper_demo/<num>')
+def ptKeeperDemo(num):
+	if num == str(8320620):
+		global loggedIn, user, access
+		loggedIn = 'museyroom'
+		user = 'museyroom'
+		access = False
+		redirect('/museyroom')
+	else:
+		redirect('/noaccess')
+
+
+@route('/noaccess')
+def noAccess():
+	return 'You do not have access to this page'
 
 def checkLogin(user = 'null'):
+	global loggedIn
 	if (loggedIn != user):
-		redirect('/login')
+		redirect('/noaccess')
+
+def checkAccess():
+	global access
+	if not access:
+		redirect('/noaccess')
+
+
 
 
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()
 user = 'null'
+access = True
 password = ''
 loggedIn = ''
 #on pi server=FlupFCGIServer
