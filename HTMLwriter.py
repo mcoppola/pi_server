@@ -17,7 +17,7 @@ class HTMLwriter(object):
 				<h id=museyhead>museyroom album / %s </h> <br>
 				''' % loc
 
-	def museyHeader(self, user, loc):
+	def genHeader(self, user, loc):
 		return '''<html><head><link rel="stylesheet" href="style.css"></head>
 				<body>
 				<h id=museyhead>%s / %s </h> <br>
@@ -35,7 +35,8 @@ class HTMLwriter(object):
 	def uploadSongZip(self, loc):
 		return ('''<h>replace pro tools session</h>
 				<p>Upload a compressed .zip file of the entire directory 
-				to replace the current version on the server</p>
+				to replace the current version on the server.  This will take a while to upload.  After you press upload, please do not press back.
+				After it is done uploading, it will still take a few minutes to unzip.</p>
 				<form action="/replace/%s" method="post"
 				enctype="multipart/form-data"> <small>
 				<input type="file" name="upload" />
@@ -46,7 +47,9 @@ class HTMLwriter(object):
 	def uploadNewSongZip(self):
 		return ('''<h>Add Song</h>
 				<p>Upload a compressed .zip file of the entire Pro Tools Session
-				directory</p>
+				directory.  This will take a while to upload.  After you press upload, please do not press back.
+				After it is done uploading, it will still take a few minutes to unzip.  
+				When this is complete it will be located in your home directory.</p>
 				<form action="/addSong" method="post"
 				enctype="multipart/form-data"> <small>
 				<input type="file" name="upload" />
@@ -70,6 +73,8 @@ class HTMLwriter(object):
 			    <title>mc</title>
 			    <link rel="stylesheet" href="style.css">
 			  </head>'''
+
+	noAccess = head + 'You do not have access to this page. ' + '<a href="/login">home</a>'
 
 	index = '''<h id=header></h> </html>'''
 	
@@ -105,4 +110,6 @@ class HTMLwriter(object):
 	# 			<body>'''
 
 	museyFooter = '''</ol></body></html>'''
+
+	logHeader = '''<br><br><h>activity log /</h><small><ul>'''
 

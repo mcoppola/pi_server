@@ -67,30 +67,10 @@ def museyroomHack(loc, loc2):
 	checkLogin('museyroom')
 	return  printProToolsDirectory(str(loc + '/' + loc2))
 
-@route('/<user>', method='GET')
-def userGeneric(user):
-	checkLogin(user)
-	return printProToolsDirectory('')
-
-@route('/<user>/<loc>', method='GET')
-def userGenericLoc(user, dir):
-	checkLogin(user)
-	return printProToolsDirectory(dir)
-
-@route('/<user>/<dir>/<loc2>', method='GET')
-def userGenericLocHack(user, dir, loc):
-	checkLogin(user)
-	return printProToolsDirectory(str(dir + '/' + loc))
-
-@route('/<user>/<dir>/<loc>/<loc2>', method='GET')
-def userGenericLocHack(user):
-	checkLogin(user)
-	return printProToolsDirectory(str(dir + '/' + loc + '/' + loc2))
-
 def printProToolsDirectory(loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.header(user, formatLoc(loc)))
+	fl.write(html.genHeader(user, formatLoc(loc)))
 	if (loc != ''):
 		fl.write(html.proToolsLinks(user, loc))
 		loca = loc + '/'
@@ -128,8 +108,11 @@ def printProToolsDirectory(loc):
 					+ str(size) + ' bytes' +  ' | '
 					+ str(date) + '</li>' + '\n')
 		break
-
+	
 	fl.write(html.museyFooter + html.folderLinksFooter(user))
+	if( loc == ''):
+		log = open('site/' + user + '/log.txt').read()
+		fl.write(html.logHeader + str(log))
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -198,9 +181,11 @@ def doAddPTX(loc):
 			shutil.move('data/' + user + '/' + loc + '/' + fn, 'data/' + user + '/' + loc + '/Session File Backups/' + newName)
 			#write new session file
 			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
+			logger('addPTX', loc)
 			redirect('/' + user + '/' + loc)
 		except:
 			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
+			logger('addPTX', loc)
 			redirect('/' + user + '/' + loc)
 	return 'no file was uploaded'
 
@@ -227,6 +212,7 @@ def doAddSong():
 			os.mkdir('data/' + user + '/' + dirName)
 		unzip('data/' + user + '/' + fn, 'data/' + user + '/' + dirName)
 		os.remove('data/' + user + '/' + fn)
+		logger('addSong', fn)
 		redirect('/' + user)
 
 @route('/addAudio/<loc>')
@@ -258,21 +244,44 @@ def downloadHACK(loc, loc2, num):
 	fn = files[num]
 	return static_file(fn, root=('data/' + user + '/' + loc), download=fn)
 
-@route('/ptkeeper_demo/<num>')
+@route('/ptkeeper_demo/<num:int>')
 def ptKeeperDemo(num):
-	if num == str(8320620):
+	if num == 8320620:
 		global loggedIn, user, access
 		loggedIn = 'museyroom'
 		user = 'museyroom'
 		access = False
+		print 'redirected to museyroom'
 		redirect('/museyroom')
 	else:
+		print 'redirected to noaccess'
 		redirect('/noaccess')
 
+#keep generic at bottom of file
+@route('/<user>', method='GET')
+def userGeneric(user):
+	checkLogin(user)
+	return printProToolsDirectory('')
+
+@route('/<user>/<dir>', method='GET')
+def userGenericLoc(user, dir):
+	print 'in userGenericLoc'
+	checkLogin(user)
+	return printProToolsDirectory(dir)
+
+@route('/<user>/<dir>/<loc2>', method='GET')
+def userGenericLocHack(user, dir, loc):
+	checkLogin(user)
+	return printProToolsDirectory(str(dir + '/' + loc))
+
+@route('/<user>/<dir>/<loc>/<loc2>', method='GET')
+def userGenericLocHack(user):
+	checkLogin(user)
+	return printProToolsDirectory(str(dir + '/' + loc + '/' + loc2))
 
 @route('/noaccess')
 def noAccess():
-	return 'You do not have access to this page'
+	return html.noAccess
 
 def checkLogin(user = 'null'):
 	global loggedIn
@@ -284,9 +293,15 @@ def checkAccess():
 	if not access:
 		redirect('/noaccess')
 
+def logger(action, loc):
+	global user
+	log = open('site/' + user + '/log.text').read()
+	newlog = '<li>' + str(datetime.datetime.now()) + ' : ' + user + logActions[action] + loc + '</li><br>'
+	log = str(newlog) + str(log)
+	open('site/' + user + '/log.txt', 'wb').write(log)
 
 
-
+logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()
