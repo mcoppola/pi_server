@@ -17,8 +17,8 @@ class HTMLwriter(object):
 				<h id=museyhead>museyroom album / %s </h> <br>
 				''' % loc
 
-	 def museyHeader(self, user, loc):
- 		return '''<html><head><link rel="stylesheet" href="style.css"></head>
+	def museyHeader(self, user, loc):
+		return '''<html><head><link rel="stylesheet" href="style.css"></head>
 				<body>
 				<h id=museyhead>%s / %s </h> <br>
 				''' % (user, loc)
