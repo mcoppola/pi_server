@@ -67,7 +67,25 @@ def museyroomHack(loc, loc2):
 	checkLogin('museyroom')
 	return  printProToolsDirectory(str(loc + '/' + loc2))
 
+@route('/<user>', method='GET')
+def userGeneric(user):
+	checkLogin(user)
+	return printProToolsDirectory('')
 
+@route('/<user>/<loc>', method='GET')
+def userGenericLoc(user, dir):
+	checkLogin(user)
+	return printProToolsDirectory(dir)
+
+@route('/<user>/<dir>/<loc2>', method='GET')
+def userGenericLocHack(user, dir, loc):
+	checkLogin(user)
+	return printProToolsDirectory(str(dir + '/' + loc))
+
+@route('/<user>/<dir>/<loc>/<loc2>', method='GET')
+def userGenericLocHack(user):
+	checkLogin(user)
+	return printProToolsDirectory(str(dir + '/' + loc + '/' + loc2))
 
 def printProToolsDirectory(loc):
 	global user
