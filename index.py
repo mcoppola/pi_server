@@ -90,7 +90,7 @@ def userGenericLocHack(user):
 def printProToolsDirectory(loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.museyHeader(formatLoc(loc)))
+	fl.write(html.header(user, formatLoc(loc)))
 	if (loc != ''):
 		fl.write(html.proToolsLinks(user, loc))
 		loca = loc + '/'

@@ -17,6 +17,12 @@ class HTMLwriter(object):
 				<h id=museyhead>museyroom album / %s </h> <br>
 				''' % loc
 
+	 def museyHeader(self, user, loc):
+ 		return '''<html><head><link rel="stylesheet" href="style.css"></head>
+				<body>
+				<h id=museyhead>%s / %s </h> <br>
+				''' % (user, loc)
+
 	def proToolsLinks(self, user, loc):
 		return (' <a title="replace this directory with a zip file" href="/replace/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
 					+ '<a title="compress this directory into a .zip file, may take a while" href="/mkzip/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
