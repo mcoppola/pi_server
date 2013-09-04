@@ -42,6 +42,16 @@ def logout():
 def about():
 	return html.about
 
+# RESUME ----------------------------------------------------/
+@route('/resume')
+def resume():
+	return open('resume/index.html', 'r')
+
+@route('/resume/<loc>/<filename:path>')
+def send_static(loc, filename):
+	return static_file(filename, root= './resume/' + loc)
+
+# -----------------------------------------------------------/
 @route('/master')
 def about():
 	return html.addUser
@@ -220,7 +230,7 @@ def addAudio(loc):
 	return 'comming soon'
 
 #download html link for files in current directory
-@route('/down/<loc>/<num>')
+@route('/down/<loc>/<num:int>')
 def download(loc, num):
 	global user
 	checkLogin(user)
@@ -232,7 +242,7 @@ def download(loc, num):
 	return static_file(fn, root=('data/' + user + '/' + loc), download=fn)
 
 #hack FIX 
-@route('/down/<loc>/<loc2>/<num>')
+@route('/down/<loc>/<loc2>/<num:int>')
 def downloadHACK(loc, loc2, num):
 	global user
 	checkLogin(user)
@@ -251,10 +261,8 @@ def ptKeeperDemo(num):
 		loggedIn = 'museyroom'
 		user = 'museyroom'
 		access = False
-		print 'redirected to museyroom'
 		redirect('/museyroom')
 	else:
-		print 'redirected to noaccess'
 		redirect('/noaccess')
 
 #keep generic at bottom of file
@@ -265,7 +273,6 @@ def userGeneric(user):
 
 @route('/<user>/<dir>', method='GET')
 def userGenericLoc(user, dir):
-	print 'in userGenericLoc'
 	checkLogin(user)
 	return printProToolsDirectory(dir)
 
@@ -286,7 +293,7 @@ def noAccess():
 def checkLogin(user = 'null'):
 	global loggedIn
 	if (loggedIn != user):
-		redirect('/noaccess')
+		redirect('/login')
 
 def checkAccess():
 	global access

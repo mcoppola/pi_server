@@ -1,0 +1,48 @@
+body         { background-color: black; color: #AAA; font-size: 12pt; padding: 0; margin: 0; }
+#unsupported { border: 1px solid yellow; color: black; background-color: #FFFFAD; padding: 2em; margin: 1em; display: inline-block; }
+#stars       { display: block; margin: auto; }
+
+#controls            { position: absolute; display: inline-block; width: 90px; height: 90px; }
+#controls img        { cursor: pointer; }
+#controls img:active { margin-top: 2px; margin-left: 2px; opacity: 0.5; }
+#controls #up        { position: absolute; left: 30px; top:  0px; }
+#controls #down      { position: absolute; left: 30px; top: 60px; }
+#controls #left      { position: absolute; left:  0px; top: 30px; }
+#controls #right     { position: absolute; left: 60px; top: 30px; }
+
+
+#container {
+	position:relative;
+
+}
+#inner {
+
+	/*height:10em;*/
+}
+
+header {
+	color:#fff;
+	font-size: 20px;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	bottom: 100px;
+/*	margin-top: auto;
+	margin-bottom: auto;*/
+	letter-spacing: 1px;
+
+	/*text-shadow: 0px 2px 3px #777, 0px 4px 8px #333, 0px 8px 12px #666;*/
+
+	font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+
+
+}
+p#box {
+	width: 300px;
+	height: 300px;
+margin-left:auto;
+margin-right:auto;
+
+	border-style:solid;
+	border-color: #ffffff;
+}

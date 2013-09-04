@@ -1,0 +1,88 @@
+<html>
+<head>
+  <meta charset = "utf-8">
+    <title>JS demos | Matthew Coppola</title>
+    <link rel="stylesheet" href="styles.css">
+    <script language="javascript" src="../js/jquery-1.7.1.min.js" type="text/javascript"></script>
+	<script language="javascript" src="../js/jquery.tips.js" type="text/javascript"></script>
+	<script src="../js/jquery.lightbox-0.5.js" type="text/javascript"></script>
+    <script type="text/javascript">
+		$("document").ready(function (){ 
+		// activate tooltip
+			 $('.tip').tipsy({gravity: 's',fade: true});
+		});
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function()
+			{
+				$("#gallery img").fadeTo("fast", 0.8);
+				$("#gallery img").hover(function()
+				{
+					$(this).fadeTo("fast", 1.0);
+				},function()
+				{
+					$(this).fadeTo("fast", 0.8);
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			$(function() {
+				var $elem = $('.container_24');
+				
+				$('#nav_up').fadeIn('slow');
+				$('#nav_down').fadeIn('slow');  
+				
+				$(window).bind('scrollstart', function(){
+					$('#nav_up,#nav_down').stop().animate({'opacity':'0.2'});
+				});
+				$(window).bind('scrollstop', function(){
+					$('#nav_up,#nav_down').stop().animate({'opacity':'1'});
+				});
+				
+				$('#nav_down').click(
+					function (e) {
+						$('html, body').animate({scrollTop: $elem.height()}, 800);
+					}
+				);
+				$('#nav_up').click(
+					function (e) {
+						$('html, body').animate({scrollTop: '0px'}, 800);
+					}
+				);
+		    });
+	</script>
+  </head>
+    <body>
+		<table border="0px">
+				<tr>
+					<td>
+					<div id="gallery">
+						<ul>
+						<a href="road_perspective/index.html">
+						<img alt="Endless Room" height="200px" src="../img/endless_room.png" style="float: left; margin-right:20px; vertical-align: middle" width="200px" /></a></td>
+						</ul>
+					</div>
+					<td>
+						
+					<td>
+					<div id="gallery">
+						<ul>
+						<a href="starfield/index.html">
+						<img alt="Starfield" height="200px" src="../img/starfield.png" style="float: left; margin-right:20px; vertical-align: middle" width="200px" /></a></td>
+						</ul>
+					</div>
+					<td>
+
+					<td>
+					<div id="gallery">
+						<ul>
+						<a href="colorWaves/index.html">
+						<img alt="ColorWave" height="200px" src="../img/color.png" style="float: left; margin-right:20px; vertical-align: middle" width="200px" /></a></td>
+						</ul>
+					</div>
+					<td>
+				</tr>
+			</table>
+	
+	</body>
+</html>

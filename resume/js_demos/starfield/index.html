@@ -1,0 +1,70 @@
+<!DOCTYPE html> 
+<html>
+<head>
+  <title>album</title> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+  <link href="stars.css" media="screen, print" rel="stylesheet" type="text/css" /> 
+</head> 
+
+<body> 
+<header>
+<div id="container">
+  <div id="inner ">
+    <div class="content" >
+<!--       <p id="box"></p> -->
+
+      <h1>museyroom</h1>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+  <canvas id="stars">
+    <div id="unsupported">
+      Sorry, this page cannot be run because your browser does not support the &lt;canvas&gt; element
+    </div>
+  </canvas>
+  <script src="utils.js"></script>
+
+  <script src="game.js" type="text/javascript"></script> 
+  <script src="stars.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  Game.ready(function() {
+    var canvas = document.getElementById('stars'),
+        touch = utils.captureTouch(canvas),
+        xold = 0,
+        yold = 0;
+
+    // var up    = document.getElementById('up');
+    // var down  = document.getElementById('down');
+    // var left  = document.getElementById('left');
+    // var right = document.getElementById('right');
+
+    var stars = Game.start('stars', Stars);
+
+    if ( touch.isPressed ) {
+      if ( touch.x > xold ) {
+        Game.addEvent(right, 'click', function() { stars.changeDirection('right'); });
+      }
+      else{
+        Game.addEvent(left,  'click', function() { stars.changeDirection('left');  });
+      }
+      if (touch.y > yold)  {
+        Game.addEvent(up,    'click', function() { stars.changeDirection('up');    });
+      }
+      else{
+        Game.addEvent(down,  'click', function() { stars.changeDirection('down');  });
+      }
+      xold = touch.x;
+      yold = touch.y;
+
+    }    // Game.addEvent(up,    'click', function() { stars.changeDirection('up');    });
+    // Game.addEvent(down,  'click', function() { stars.changeDirection('down');  });
+    // Game.addEvent(left,  'click', function() { stars.changeDirection('left');  });
+    // Game.addEvent(right, 'click', function() { stars.changeDirection('right'); });
+  });
+  </script>
+
+</body> 
+</html>
