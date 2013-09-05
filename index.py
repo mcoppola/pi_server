@@ -17,7 +17,7 @@ def login():
 
 @route('/login', method='POST')
 def do_login():
-	global user, loggedIn, users, passwords
+	global user, loggedIn, users, passwords, access
 	user = request.forms.get('login')
 	password = request.forms.get('password')
 	count=0
@@ -25,6 +25,7 @@ def do_login():
 		if u == user:
 			if passwords[count] == password:
 				loggedIn = str(user)
+				access = True
 				redirect('/' + user)
 			else:
 				return 'Wrong password.  Press back to try again'
@@ -317,4 +318,4 @@ access = True
 password = ''
 loggedIn = ''
 #on pi server=FlupFCGIServer
-run(host='127.0.0.1', port=8080)
+run(host='127.0.0.1', port=8080, server=FlupFCGIServer)
