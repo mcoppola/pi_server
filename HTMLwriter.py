@@ -70,9 +70,17 @@ class HTMLwriter(object):
 
 	head = '''<head>
 			  <meta charset = "utf-8">
-			    <title>mc</title>
-			    <link rel="stylesheet" href="style.css">
-			  </head>'''
+				<title>mc</title>
+				<link rel="stylesheet" href="style.css">
+				<script>
+				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+				})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+				ga('create', 'UA-43748849-1', 'no-ip.biz');
+				ga('send', 'pageview');
+				</script>
+			   </head>'''
 
 	noAccess = head + 'You do not have access to this page. ' + '<a href="/login">home</a>'
 
