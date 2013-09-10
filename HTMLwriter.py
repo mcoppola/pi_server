@@ -12,37 +12,62 @@ class HTMLwriter(object):
  					'''
 
  	def museyHeader(self, loc):
- 		return '''<html><head><link rel="stylesheet" href="style.css"></head>
+ 		return '''<html><head></head>
 				<body>
 				<h id=museyhead>museyroom album / %s </h> <br>
 				''' % loc
 
-	def genHeader(self, user, loc):
-		return '''<html><head><link rel="stylesheet" href="style.css"></head>
+	def genHeader(self, user, loc = ''):
+		return '''<html><head></head>
 				<body>
 				<h id=museyhead>%s / %s </h> <br>
 				''' % (user, loc)
 
-	def proToolsLinks(self, user, loc):
-		return (' <a title="replace this directory with a zip file" href="/replace/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
-					+ '<a title="compress this directory into a .zip file, may take a while" href="/mkzip/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
-					+ '<a title="upload new audio instead of replacing the entire directory" href="/addAudio/'+ loc + '" style="text-decoration: none;">add audio</a>' + ' | '
-					+ '<a title="upload a new ptf or ptx file" href="/addPTX/' + loc + '"  style="text-decoration: none;">add ptx</a>')
-		
-	def addSong(self, user):
-		return ('<br><a href="/addSong" style="text-decoration: none;">add song</a>')		
+	def proToolsLinks(self, account, loc):
+		return (' <small><a title="replace this directory with a zip file" href="/replace/' + account + '/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
+					+ '<a title="compress this directory into a .zip file, may take a while" href="/mkzip/' + account + '/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
+					+ '<a title="upload new audio instead of replacing the entire directory" href="/addAudio/' + account + '/' + loc + '" style="text-decoration: none;">add audio</a>' + ' | '
+					+ '<a title="upload a new ptf or ptx file" href="/addPTX/' + account + '/' + loc + '"  style="text-decoration: none;">add ptx</a> </small>')
+
+	def genFolderLinks(self, account, loc):
+		if (loc == ''):
+			return (' <small><a title="upload files" href="/upload_gen_folder/' + account +'" style="text-decoration: none;">upload</a></small>' )
+		else:
+			return (' <small><a title="upload files" href="/upload_gen_folder/' + account + '/' + loc +'" style="text-decoration: none;">upload</a></small>' )
+
+
+	def addSong(self, account, user):
+		return ('<br><a href="/addSong/%s" style="text-decoration: none;">add song</a>' % account)		
 	
-	def uploadSongZip(self, loc):
+	def uploadSongZip(self, account, loc):
 		return ('''<h>replace pro tools session</h>
 				<p>Upload a compressed .zip file of the entire directory 
 				to replace the current version on the server.  This will take a while to upload.  After you press upload, please do not press back.
 				After it is done uploading, it will still take a few minutes to unzip.</p>
-				<form action="/replace/%s" method="post"
+				<form action="/replace/%s/%s" method="post"
 				enctype="multipart/form-data"> <small>
 				<input type="file" name="upload" />
 				<input type="submit" value="Upload" /> </small>
 				</form>
-				''' % loc)
+				''' %(account, loc))
+
+	def uploadGen(self, account, loc):
+		if (loc == ''):
+			return ('''<p>Upload a file to add to the current directory</p>
+					<form action="/upload_gen_folder/%s" method="post"
+					enctype="multipart/form-data"> <small>
+					<input type="file" name="upload" />
+					<input type="submit" value="Upload" /> </small>
+					</form>
+					''' % account)
+		else:
+			return ('''<p>Upload a file to add to the current directory</p>
+					<form action="/upload_gen_folder/%s/%s" method="post"
+					enctype="multipart/form-data"> <small>
+					<input type="file" name="upload" />
+					<input type="submit" value="Upload" /> </small>
+					</form>
+					''' %(account, loc))
 
 	def uploadNewSongZip(self):
 		return ('''<h>Add Song</h>
@@ -57,21 +82,20 @@ class HTMLwriter(object):
 				</form>
 				''')		
 
-	def uploadPTX(self, loc):
+	def uploadPTX(self, account, loc):
 		return ('''<h>add pro tools session file (ptx/ptf)</h>
 				<p>if the ptx/ptf matches the name of an existing file it will be replaced in the top of the directory
 				and the previous version will be moved to Session File Backups</p>
-				<form action="/addPTX/%s" method="post"
+				<form action="/addPTX/%s/%s" method="post"
 				enctype="multipart/form-data"> <small>
 				<input type="file" name="upload" />
 				<input type="submit" value="Upload" /> </small>
 				</form>
-				''' % loc)
+				''' %(account, loc))
 
 	head = '''<head>
 			  <meta charset = "utf-8">
 				<title>mc</title>
-				<link rel="stylesheet" href="style.css">
 				<script>
 				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -99,10 +123,18 @@ class HTMLwriter(object):
 				<a href= /about > about  </a> </small>
 				'''
 
-	def folderLinksFooter(self, user): 
-		return '''<small> <a href= /%s > go up </a>
+	def folderLinksFooter(self, user, account): 
+		return '''<small> <a href= /home/%s > home </a>
+				&nbsp;|&nbsp;
+				<a href= /account/%s > go up </a>
 				&nbsp;|&nbsp;
 				<a href= /addSong> add song </a>
+				&nbsp;|&nbsp;
+				<a href= /logout > logout </a> </small>
+				''' % (user, account)
+	
+	def homeFooter(self, user):
+		return '''<small> <a href= pass/%s > change password </a>
 				&nbsp;|&nbsp;
 				<a href= /logout > logout </a> </small>
 				''' % user

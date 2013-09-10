@@ -1,7 +1,7 @@
 # Matthew Coppola
 # server code for raspberry pi 0.1
 # implementation for museyroom album pro tools session repository
-import os, time, shutil, zipfile, datetime
+import os, time, shutil, zipfile, datetime, subprocess
 from bottle import route, run, request, redirect, FlupFCGIServer, static_file
 from HTMLwriter import HTMLwriter
 from util import zipdir, formatLoc, unzip, unzipReplace
@@ -26,7 +26,7 @@ def do_login():
 			if passwords[count] == password:
 				loggedIn = str(user)
 				access = True
-				redirect('/' + user)
+				redirect('/home/' + user)
 			else:
 				return 'Wrong password.  Press back to try again'
 		else:
@@ -48,9 +48,36 @@ def about():
 def resume():
 	return open('resume/index.html', 'r')
 
-@route('/resume/<loc>/<filename:path>')
+@route('/resume/<loc>/<filename:path>', method='GET')
 def send_static(loc, filename):
 	return static_file(filename, root= './resume/' + loc)
+
+# VitaminME -------------------------------------------------/
+@route('/vm')
+def vitaminMe():
+	out = subprocess.Popen('php vm/public_html/index.php', shell=True, stdout=subprocess.PIPE)
+	return out.stdout.read()
+
+@route('/vm/<loc>/<filename:path>')
+def send_staticVM(loc, filename):
+	return static_file(filename, root= './vm/public_html' + loc)
+
+# USER HOME -------------------------------------------------/
+@route('/home/<user>')
+def userHome(user):
+	# display groups that the user belongs to
+	checkLogin(user)
+	global groups
+	fl = open('site/html_gen.txt', 'w')
+	fl.write(html.genHeader(user))
+	fl.write('<ul style="list-style-type:circle">')
+	for g in groups[user]:
+		fl.write('<a href="/account/' + g + '"><li>' + g + '</li></a> \n')
+	fl.write('</ul> </ol>')
+	fl.write(html.homeFooter(user))
+	fl.close()
+	txt = open('site/html_gen.txt', 'r')
+	return txt
 
 # -----------------------------------------------------------/
 @route('/master')
@@ -62,80 +89,111 @@ def mcHome():
 	checkLogin('mc')
 	return 'welcome matthew'
 
-@route('/museyroom', method='GET')
-def museyroom():
-	checkLogin('museyroom')
-	return printProToolsDirectory('')
+# @route('/account/museyroom', method='GET')
+# def museyroom():
+# 	checkLogin('museyroom')
+# 	return printProToolsDirectory('museyroom', '')
 
-@route('/museyroom/<loc>', method='GET')
-def museyroomLoc(loc):
-	checkLogin('museyroom')
-	return  printProToolsDirectory(str(loc)) 
+# @route('/account/museyroom/<loc>', method='GET')
+# def museyroomLoc(loc):
+# 	checkLogin('museyroom')
+# 	return  printProToolsDirectory('museyroom', str(loc)) 
 
-#hack (FIX)
-@route('/museyroom/<loc>/<loc2>', method='GET')
-def museyroomHack(loc, loc2):
-	checkLogin('museyroom')
-	return  printProToolsDirectory(str(loc + '/' + loc2))
+# #hack (FIX)
+# @route('/account/museyroom/<loc>/<loc2>', method='GET')
+# def museyroomHack(loc, loc2):
+# 	checkLogin('museyroom')
+# 	return  printProToolsDirectory('museyroom', str(loc + '/' + loc2))
 
-def printProToolsDirectory(loc):
+def printGenDirectory(account, loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.genHeader(user, formatLoc(loc)))
+	fl.write(html.genHeader(account, formatLoc(loc)))
+	fl.write(html.genFolderLinks(account, loc))
 	if (loc != ''):
-		fl.write(html.proToolsLinks(user, loc))
 		loca = loc + '/'
 	else:
 		loca = loc
-	for top, dirs, files in os.walk('data/' + user + '/' + loc ):
+	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
 		count = 0
 		fl.write('<ul style="list-style-type:circle">')
 		for f in dirs:
-			fl.write('<a href="/' + user + '/' + loca + f + '"><li>' + f + '</li></a> \n')
+			fl.write('<a href="/account/' + account + '/' + loca + f + '"><li>' + f + '</li></a> \n')
 		fl.write('</ul> <ol>')
 		for f in files:
 			count = count + 1
-			size = os.path.getsize('data/' + user + '/' + loc + '/' + f)
-			date = time.ctime(os.path.getmtime('data/' + user + '/' + loc + '/' + f))
+			size = os.path.getsize('data/' + account + '/' + loc + '/' + f)
+			date = time.ctime(os.path.getmtime('data/' + account + '/' + loc + '/' + f))
+			fl.write('<li>' + '<a href="/' + account + '/down/' + loca + str(count) + '">'
+				+ f + '</a>' + ' | '
+				+ str(size) + ' bytes' +  ' | '
+				+ str(date) + '</li>' + '\n')
+		break
+	fl.write(html.museyFooter + html.folderLinksFooter(user, account))
+	fl.close()
+	txt = open('site/html_gen.txt', 'r')
+	return txt
+
+def printProToolsDirectory(account, loc):
+	global user
+	fl = open('site/html_gen.txt', 'w')
+	fl.write(html.genHeader(account, formatLoc(loc)))
+	if (loc != ''):
+		fl.write(html.proToolsLinks(account, loc))
+		loca = loc + '/'
+	else:
+		loca = loc
+	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
+		count = 0
+		fl.write('<ul style="list-style-type:circle">')
+		for f in dirs:
+			fl.write('<a href="/account/' + account + '/' + loca + f + '"><li>' + f + '</li></a> \n')
+		fl.write('</ul> <ol>')
+		for f in files:
+			count = count + 1
+			size = os.path.getsize('data/' + account + '/' + loc + '/' + f)
+			date = time.ctime(os.path.getmtime('data/' + account + '/' + loc + '/' + f))
 
 			if f.endswith('.ptx'):
-				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">' + '<font color="#66CCFF">'
+				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">' + '<font color="#66CCFF">'
 					+ f + '</a></font>' + ' | '
 					+ str(size) + ' bytes' +  ' | '
 					+ str(date) + '</li>' + '\n')
 			elif f.endswith('.ptf'):
-				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">' + '<font color="#6699FF">'
+				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">' + '<font color="#6699FF">'
 					+ f + '</a></font>' + ' | '
 					+ str(size) + ' bytes' +  ' | '
 					+ str(date) + '</li>' + '\n')
 			elif f.endswith('.zip'):
-				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">' + '<font color="#00CC99">'
+				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">' + '<font color="#00CC99">'
 					+ f + '</a></font>' + ' | '
 					+ str(size) + ' bytes' +  ' | '
 					+ str(date) + '</li>' + '\n')
 			else:
-				fl.write('<li>' + '<a href="' + '/down/' + loc +'/' + str(count) + '">'
+				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">'
 					+ f + '</a>' + ' | '
 					+ str(size) + ' bytes' +  ' | '
 					+ str(date) + '</li>' + '\n')
 		break
 	
-	fl.write(html.museyFooter + html.folderLinksFooter(user))
+	fl.write(html.museyFooter + html.folderLinksFooter(user, account))
 	if( loc == ''):
-		log = open('site/' + user + '/log.txt').read()
+		log = open('site/' + account + '/log.txt').read()
 		fl.write(html.logHeader + str(log))
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
 
-@route('/replace/<loc>')
-def replace(loc):
+# PRO TOOLS FUNCTIONS --------------------------------------------------/
+
+@route('/replace/<account>/<loc>')
+def replace(account, loc):
 	global user
 	checkLogin(user)
-	return html.uploadSongZip(loc)
+	return html.uploadSongZip(account, loc)
 
-@route('/replace/<loc>', method='POST')
-def doReplace(loc):
+@route('/replace/<account>/<loc>', method='POST')
+def doReplace(account, loc):
 	global user
 	checkLogin(user)
 	checkAccess()
@@ -146,37 +204,37 @@ def doReplace(loc):
 		print 'file %s was upload' % fn
 		#move directory to _previous
 		try:
-			shutil.move('data/' + user + '/' + loc + '/', 'data/' + user + '/_previous/')
+			shutil.move('data/' + account + '/' + loc + '/', 'data/' + account + '/_previous/')
 		except:
-			shutil.rmtree('data/' + user + '/_previous/' + loc + '/')
-			shutil.move('data/' + user + '/' + loc + '/', 'data/' + user + '/_previous/' + loc + '/')
+			shutil.rmtree('data/' + account + '/_previous/' + loc + '/')
+			shutil.move('data/' + account + '/' + loc + '/', 'data/' + account + '/_previous/' + loc + '/')
 		#zip directory 
 		(dirName, fileName) = fn.split('.')
-		if not os.path.exists('data/' + user + '/' + dirName):
-			os.mkdir('data/' + user + '/' + dirName)
-		unzip('data/' + user + '/' + fn, 'data/' + user + '/' + dirName)
-		os.remove('data/' + user + '/' + fn)
-		redirect('/' + user + '/' + dirName)
+		if not os.path.exists('data/' + account + '/' + dirName):
+			os.mkdir('data/' + account + '/' + dirName)
+		unzip('data/' + account + '/' + fn, 'data/' + account + '/' + dirName)
+		os.remove('data/' + account + '/' + fn)
+		redirect('/account/' + account + '/' + dirName)
 	else:
 		return 'error, directory was not replaced'	
 
-@route('/mkzip/<loc>')
-def makeZip(loc):
+@route('/mkzip/<account>/<loc>')
+def makeZip(account, loc):
 	global user
 	checkLogin(user)
 	checkAccess()
 	#make zip of directory
-	zipdir('data/' + user + '/' + loc + '/' + loc + '.zip', 'data/' + user + '/' + loc)
-	redirect ('/' + user + '/' + loc)
+	zipdir('data/' + account + '/' + loc + '/' + loc + '.zip', 'data/' + account + '/' + loc)
+	redirect ('/account/' + account + '/' + loc)
 
-@route('/addPTX/<loc>')
-def addPTX(loc):
+@route('/addPTX/<account>/<loc>')
+def addPTX(account, loc):
 	global user
 	checkLogin(user)
-	return html.uploadPTX(loc)
+	return html.uploadPTX(account, loc)
 
-@route('/addPTX/<loc>', method='POST')
-def doAddPTX(loc):
+@route('/addPTX/<account>/<loc>', method='POST')
+def doAddPTX(account, loc):
 	global user
 	checkLogin(user)
 	checkAccess()
@@ -189,25 +247,25 @@ def doAddPTX(loc):
 			#move existing session file
 			split = fn.split('.')
 			newName = split[0] + "_" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + split[1]
-			shutil.move('data/' + user + '/' + loc + '/' + fn, 'data/' + user + '/' + loc + '/Session File Backups/' + newName)
+			shutil.move('data/' + account + '/' + loc + '/' + fn, 'data/' + account + '/' + loc + '/Session File Backups/' + newName)
 			#write new session file
-			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
+			open('data/' + account + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
 			logger('addPTX', loc)
-			redirect('/' + user + '/' + loc)
+			redirect('/account/' + account + '/' + loc)
 		except:
-			open('data/' + user + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
+			open('data/' + account + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
 			logger('addPTX', loc)
-			redirect('/' + user + '/' + loc)
+			redirect('/account/' + account + '/' + loc)
 	return 'no file was uploaded'
 
-@route('/addSong')
-def addSong():
+@route('/addSong/<account>')
+def addSong(account):
 	global user
 	checkLogin(user)
-	return html.uploadNewSongZip()
+	return html.uploadNewSongZip(account)
 
-@route('/addSong', method='POST')
-def doAddSong():
+@route('/addSong/<account>', method='POST')
+def doAddSong(account):
 	global user
 	checkLogin(user)
 	checkAccess()
@@ -217,43 +275,89 @@ def doAddSong():
 		if not fn.endswith('.zip'):
 			return 'please choose a .zip file'
 
-		open('data/' + user + '/' + fn, 'wb').write(upload.file.read())
+		open('data/' + account + '/' + fn, 'wb').write(upload.file.read())
 		(dirName, fileName) = fn.split('.')
-		if not os.path.exists('data/' + user + '/' + dirName):
-			os.mkdir('data/' + user + '/' + dirName)
-		unzip('data/' + user + '/' + fn, 'data/' + user + '/' + dirName)
-		os.remove('data/' + user + '/' + fn)
+		if not os.path.exists('data/' + account + '/' + dirName):
+			os.mkdir('data/' + account + '/' + dirName)
+		unzip('data/' + account + '/' + fn, 'data/' + account + '/' + dirName)
+		os.remove('data/' + account + '/' + fn)
 		logger('addSong', fn)
-		redirect('/' + user)
+		redirect('/account/' + account)
 
-@route('/addAudio/<loc>')
-def addAudio(loc):
+@route('/addAudio/<account>/<loc>')
+def addAudio(account, loc):
 	return 'comming soon'
 
-#download html link for files in current directory
-@route('/down/<loc>/<num:int>')
-def download(loc, num):
+# GENERIC FUNCTIONS ----------------------------------------------------/
+
+@route('/upload_gen_folder/<account>', method='GET')
+def genUpload(account):
+	global user
+	checkLogin(user)
+	return html.uploadGen(account, '')
+
+@route('/upload_gen_folder/<account>', method='POST')
+def doGenUpload(account):
+	global user
+	checkLogin(user)
+	upload = request.files.get('upload')
+	if upload.filename:
+		fn = os.path.basename(upload.filename)
+		open('data/' + account + '/' + fn, 'wb').write(upload.file.read())
+		redirect('/account/' + account)
+
+@route('/upload_gen_folder/<account>/<loc>', method='GET')
+def genUpload(account, loc = ''):
+	global user
+	checkLogin(user)
+	return html.uploadGen(account, loc)
+
+@route('/upload_gen_folder/<account>/<loc>', method='POST')
+def doGenUpload(account, loc = ''):
+	global user
+	checkLogin(user)
+	upload = request.files.get('upload')
+	if upload.filename:
+		fn = os.path.basename(upload.filename)
+		open('data/' + account + '/' + loc + '/' + fn, 'wb').write(upload.file.read())
+		redirect('/account/' + account + '/' + loc)
+
+#download html link for files in top directory
+@route('/<account>/down/<num:int>')
+def download(account, num):
 	global user
 	checkLogin(user)
 	checkAccess()
 	num = int(num) - 1
-	files = [f for f in os.listdir('data/' + user + '/' + loc) 
-		if os.path.isfile('data/' + user + '/' + loc + '/' + f)]
+	files = [f for f in os.listdir('data/' + account) 
+		if os.path.isfile('data/' + account + '/' + f)]
 	fn = files[num]
-	return static_file(fn, root=('data/' + user + '/' + loc), download=fn)
+	return static_file(fn, root=('data/' + account), download=fn)
+
+#download html link for files in current directory
+@route('/<account>/down/<loc>/<num:int>')
+def download(account, loc, num):
+	global user
+	checkLogin(user)
+	checkAccess()
+	num = int(num) - 1
+	files = [f for f in os.listdir('data/' + account + '/' + loc) 
+		if os.path.isfile('data/' + account + '/' + loc + '/' + f)]
+	fn = files[num]
+	return static_file(fn, root=('data/' + account + '/' + loc), download=fn)
 
 #hack FIX 
-@route('/down/<loc>/<loc2>/<num:int>')
-def downloadHACK(loc, loc2, num):
+@route('/<account>/down/<loc>/<loc2>/<num:int>')
+def downloadHACK(account, loc, loc2, num):
 	global user
 	checkLogin(user)
 	checkAccess()
 	loc = loc+'/'+loc2
 	num = int(num) - 1
-	files = [f for f in os.listdir('data/' + user + '/' + loc) 
-		if os.path.isfile('data/' + user + '/' + loc + '/' + f)]
+	files = [f for f in os.listdir('data/' + account + '/' + loc) 
+		if os.path.isfile('data/' + account + '/' + loc + '/'+ f)]
 	fn = files[num]
-	return static_file(fn, root=('data/' + user + '/' + loc), download=fn)
+	return static_file(fn, root=('data/' + account + '/' + loc), download=fn)
 
 @route('/ptkeeper_demo/<num:int>')
 def ptKeeperDemo(num):
@@ -262,38 +366,70 @@ def ptKeeperDemo(num):
 		loggedIn = 'museyroom'
 		user = 'museyroom'
 		access = False
-		redirect('/museyroom')
+		redirect('/account/museyroom')
 	else:
 		redirect('/noaccess')
 
 #keep generic at bottom of file
-@route('/<user>', method='GET')
-def userGeneric(user):
+@route('/account/<account>', method='GET')
+def accountGeneric(account):
+	global user
 	checkLogin(user)
-	return printProToolsDirectory('')
+	settings = open('site/' + account + '/settings.txt', 'r').read().splitlines()
+	if (settings[0] == 'p'):
+		return printProToolsDirectory(account, '')
+	elif (settings[0] == 'a'):
+		return printGenDirectory(account, '')
 
-@route('/<user>/<dir>', method='GET')
-def userGenericLoc(user, dir):
+@route('/account/<account>/<dir>', method='GET')
+def accountGenericLoc(account, dir):
+	global user
 	checkLogin(user)
-	return printProToolsDirectory(dir)
+	settings = open('site/' + account + '/settings.txt', 'r').read().splitlines()
+	if (settings[0] == 'p'):
+		return printProToolsDirectory(account, dir)
+	elif (settings[0] == 'a'):
+		return printGenDirectory(account, dir)
 
-@route('/<user>/<dir>/<loc2>', method='GET')
-def userGenericLocHack(user, dir, loc):
-	checkLogin(user)
-	return printProToolsDirectory(str(dir + '/' + loc))
 
-@route('/<user>/<dir>/<loc>/<loc2>', method='GET')
-def userGenericLocHack(user):
+@route('/account/<account>/<dir>/<loc>', method='GET')
+def accountGenericLocHack(account, dir, loc):
+	global user
 	checkLogin(user)
-	return printProToolsDirectory(str(dir + '/' + loc + '/' + loc2))
+	settings = open('site/' + account + '/settings.txt', 'r').read().splitlines()
+	if (settings[0] == 'p'):
+		return printProToolsDirectory(account, str(dir + '/' + loc))
+	elif (settings[0] == 'a'):
+		return printGenDirectory(account, str(dir + '/' + loc))
+
+@route('/account/<account>/<dir>/<loc>/<loc2>', method='GET')
+def accountGenericLoc2Hack(account, dir, loc, loc2):
+	global user
+	checkLogin(user)
+	settings = open('site/' + account + '/settings.txt', 'r').read().splitlines()
+	if (settings[0] == 'p'):
+		return printProToolsDirectory(account, str(dir + '/' + loc + '/' + loc2))
+	elif (settings[0] == 'a'):
+		return printGenDirectory(account, str(dir + '/' + loc + '/' + loc2))
+
+# CHANGE PASSWORD ------------------------------------------------/
+@route('/pass/<user>', method='GET')
+def changePassword(user):
+	return 'not available'
+
 
 @route('/noaccess')
 def noAccess():
 	return html.noAccess
 
 def checkLogin(user = 'null'):
-	global loggedIn
-	if (loggedIn != user):
+	global loggedIn, groups
+	verified = False
+	if (loggedIn == user):
+		for g in groups[loggedIn]:
+			if (g == loggedIn):
+				verified = True
+	if (not verified):
 		redirect('/login')
 
 def checkAccess():
@@ -308,8 +444,10 @@ def logger(action, loc):
 	log = str(newlog) + str(log)
 	open('site/' + user + '/log.txt', 'wb').write(log)
 
-
+#locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
+#groups (user: [groups])
+groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc', 'museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()
@@ -318,4 +456,4 @@ access = True
 password = ''
 loggedIn = ''
 #on pi server=FlupFCGIServer
-run(host='127.0.0.1', port=8080, server=FlupFCGIServer)
+run(host='127.0.0.1', port=8080)
