@@ -447,7 +447,7 @@ def logger(action, loc):
 #locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc', 'museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom']}
+groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc', 'museyroom', 'wellboys'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom'], 'josh':['drunken_bear'], 'owen'['owen', 'drunken_bear', 'wellboys']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()
@@ -456,4 +456,4 @@ access = True
 password = ''
 loggedIn = ''
 #on pi server=FlupFCGIServer
-run(host='127.0.0.1', port=8080)
+run(host='127.0.0.1', port=8080, server=FlupFCGIServer)
