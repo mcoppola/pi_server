@@ -1,9 +1,32 @@
-<html><head><link rel="stylesheet" href="style.css"></head>
+<html><head></head>
 				<body>
-				<h id=museyhead>museyroom album / style.css /  </h> <br>
-				 <a title="replace this directory with a zip file" href="/replace/style.css" style="text-decoration: none;">replace</a> | <a title="compress this directory into a .zip file, may take a while" href="/mkzip/style.css" style="text-decoration: none;">make zip</a> | <a title="upload new audio instead of replacing the entire directory" href="/addAudio/style.css" style="text-decoration: none;">add audio</a> | <a title="upload a new ptf or ptx file" href="/addPTX/style.css"  style="text-decoration: none;">add ptx</a></ol></body></html><small> <a href= /museyroom > go up </a>
+				<h id=museyhead>museyroom /  </h> <br>
+				<ul style="list-style-type:circle"><a href="/account/museyroom/ManLikeBoySeaside082213"><li>ManLikeBoySeaside082213</li></a> 
+<a href="/account/museyroom/_previous"><li>_previous</li></a> 
+<a href="/account/museyroom/sounds"><li>sounds</li></a> 
+<a href="/account/museyroom/Siren Song middle"><li>Siren Song middle</li></a> 
+<a href="/account/museyroom/Green Arrows"><li>Green Arrows</li></a> 
+<a href="/account/museyroom/demo 3"><li>demo 3</li></a> 
+<a href="/account/museyroom/autoharpscratch"><li>autoharpscratch</li></a> 
+<a href="/account/museyroom/bens song session"><li>bens song session</li></a> 
+<a href="/account/museyroom/BalladSeaside080413"><li>BalladSeaside080413</li></a> 
+<a href="/account/museyroom/demo"><li>demo</li></a> 
+<a href="/account/museyroom/It Wont Change Now"><li>It Wont Change Now</li></a> 
+<a href="/account/museyroom/Siren End"><li>Siren End</li></a> 
+<a href="/account/museyroom/Bedroom Seaside"><li>Bedroom Seaside</li></a> 
+<a href="/account/museyroom/Siren part 1"><li>Siren part 1</li></a> 
+<a href="/account/museyroom/Pearly Whites"><li>Pearly Whites</li></a> 
+<a href="/account/museyroom/5 Word"><li>5 Word</li></a> 
+<a href="/account/museyroom/demo2old"><li>demo2old</li></a> 
+<a href="/account/museyroom/demo2"><li>demo2</li></a> 
+<a href="/account/museyroom/Christmas Seaside"><li>Christmas Seaside</li></a> 
+<a href="/account/museyroom/Vessels BEN"><li>Vessels BEN</li></a> 
+<a href="/account/museyroom/OTHERS"><li>OTHERS</li></a> 
+</ul> <ol></ol></body></html><small> <a href= /home/ben > home </a>
+				&nbsp;|&nbsp;
+				<a href= /account/museyroom > go up </a>
 				&nbsp;|&nbsp;
 				<a href= /addSong> add song </a>
 				&nbsp;|&nbsp;
 				<a href= /logout > logout </a> </small>
-				
+				<br><br><h>activity log /</h><small><ul><li>2013-09-02 14:23:20.418695 : matt added a session file to sounds</li><br><li>2013-09-01 11:17:53.771751 : matt added a session file to Ballad</li>
