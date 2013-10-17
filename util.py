@@ -59,16 +59,34 @@ def unzipReplace(zipFilePath, destDir):
             fd.close()
     zfile.close()
 
-def zipper(dir, zip_file):
-	zip = zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_STORED)
-	root_len = len(os.path.abspath(dir))
-	for root, dirs, files in os.walk(dir):
-		archive_root = os.path.abspath(root)[root_len:]
-		for f in files:
-			if not f.endswith('.zip'):
-				fullpath = os.path.join(root, f)
-				archive_name = os.path.join(archive_root, f)
-				print f
-				zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)
-	zip.close()
-	#return zip_file
+def sendEmail(From, To, subject, body):
+    import smtplib
+    from email.mime.text import MIMEText
+
+    # Open a plain text file for reading.  For this example, assume that
+    # the text file contains only ASCII characters.
+    #fp = open(textfile, 'rb')
+    # Create a text/plain message
+    #msg = MIMEText(message)
+    #fp.close()
+
+    # me == the sender's email address
+    # you == the recipient's email address
+    # msg['Subject'] = 'Your directory has been zipped!'
+    # msg['From'] = From
+    # msg['To'] = To
+
+    msg = "From: %s\r\nTo: %s\r\nSubject: %s\r\n%s" % (From,To,subject,body)
+
+    # Send the message via our own SMTP server, but don't include the
+    # envelope header.
+
+    server = smtplib.SMTP('smtp.gmail.com',587) #port 465 or 587
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login('mcoppola832@gmail.com','millbrook')
+    server.sendmail(From, To, msg)
+    server.close()
+
+    
