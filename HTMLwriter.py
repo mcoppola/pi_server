@@ -40,15 +40,6 @@ class HTMLwriter(object):
 				  <meta charset = "utf-8">
 				    <title>room 1</title>
 				    <link rel="stylesheet" href="style.css">
-				    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-				  	<script>
-						$(document).ready(function(){
-							setInterval(function() {
-								$('#stdout').load('ziplog');
-							}, 1000);
-
-						});
-					</script>
 				  </head>
 				  <body>
 				<h>Zip directory: %s / %s</h>
@@ -60,9 +51,33 @@ class HTMLwriter(object):
 				<input type="text" name="email" placeholder="email" />
 				<input type="submit" value="ZIP" /> </small>
 				</form>
-				<p id="stdout">ziplog</p>
 				</body>
 				</html>''' %(account, loc, account, loc))
+
+	def mkziplog(self):
+		return ('''
+				<!DOCTYPE html>
+				<html>
+				<head>
+				  <meta charset = "utf-8">
+				    <title>room 1</title>
+				    <link rel="stylesheet" href="style.css">
+				    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+				  	<script>
+						$(document).ready(function(){
+							setInterval(function() {
+								$('#stdout').load('/file/ziplog');
+							}, 1000);
+
+						});
+					</script>
+				  </head>
+				  <body>
+				<p>
+				<div id="stdout">log</div>
+				</p>
+				</body>
+				</html>''')
 
 
 	def genFolderLinks(self, account, loc):

@@ -1,11 +1,28 @@
 # Matthew Coppola
 # server code for raspberry pi 0.1
 # implementation for museyroom album pro tools session repository
-import os, time, shutil, zipfile, datetime, subprocess
+import os, time, shutil, zipfile, datetime, subprocess, threading
 from bottle import route, run, request, redirect, FlupFCGIServer, static_file
 from HTMLwriter import HTMLwriter
 from util import zipdir, formatLoc, unzip, unzipReplace, sendEmail
 
+
+class ZipDir ( threading.Thread ):
+	def __init__(self, account, loc, emailTo):
+              threading.Thread.__init__(self)
+              self.account = account
+              self.loc = loc
+              self.emailTo = emailTo
+
+	def run (self):
+		subprocess.call('site/scripts/zip.sh ' + self.account + ' ' + self.loc, shell=True)
+		subject = '%s has been Zipped!' % self.loc
+		body = self.loc + ' has been zipped.  You can download the zip file from within the %s directory' % self.loc
+		sendEmail('mcoppola832@gmail.com', self.emailTo, subject, body)
+		redirect ('/account/' + self.account + '/' + self.loc)
+
+
+#-------------------------------------------------------------------------//
 
 @route('/', method='GET')
 def index():
@@ -42,6 +59,10 @@ def logout():
 @route('/about')
 def about():
 	return html.about
+
+@route('/file/<file>')
+def returnFile(file):
+	return open(file, 'r')
 
 # RESUME ----------------------------------------------------/
 @route('/resume')
@@ -89,21 +110,6 @@ def mcHome():
 	checkLogin('mc')
 	return 'welcome matthew'
 
-# @route('/account/museyroom', method='GET')
-# def museyroom():
-# 	checkLogin('museyroom')
-# 	return printProToolsDirectory('museyroom', '')
-
-# @route('/account/museyroom/<loc>', method='GET')
-# def museyroomLoc(loc):
-# 	checkLogin('museyroom')
-# 	return  printProToolsDirectory('museyroom', str(loc)) 
-
-# #hack (FIX)
-# @route('/account/museyroom/<loc>/<loc2>', method='GET')
-# def museyroomHack(loc, loc2):
-# 	checkLogin('museyroom')
-# 	return  printProToolsDirectory('museyroom', str(loc + '/' + loc2))
 
 def printGenDirectory(account, loc):
 	global user
@@ -239,12 +245,15 @@ def makeZip(account, loc, emailTo):
 	#make zip of directory
 	ziplog = open('ziplog', 'wb')
 	ziplog.close()
-	subprocess.call('site/scripts/zip.sh ' + account + ' ' + loc, shell=True)
+	z = ZipDir(account, loc, emailTo)
+	z.start()
+	#redirect ('/account/' + account + '/' + loc)
+	redirect('/mkziplog')
 
-	subject = '%s has been Zipped!' % loc
-	body = loc + ' has been zipped.  You can download the zip file from within the %s directory' % loc
-	sendEmail('mcoppola832@gmail.com', emailTo, subject, body)
-	redirect ('/account/' + account + '/' + loc)
+@route('/mkziplog')
+def mkZiplog():
+	return html.mkziplog()
+	
 
 @route('/addPTX/<account>/<loc>')
 def addPTX(account, loc):
