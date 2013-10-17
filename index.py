@@ -237,7 +237,10 @@ def makeZip(account, loc, emailTo):
 	checkLogin(user)
 	checkAccess()
 	#make zip of directory
-	subprocess.call('site/scripts/zip.sh ' + account + ' ' + loc, stdout='ziplog')
+	ziplog = open('ziplog', 'wb')
+	ziplog.close()
+	subprocess.call('site/scripts/zip.sh ' + account + ' ' + loc, shell=True)
+
 	subject = '%s has been Zipped!' % loc
 	body = loc + ' has been zipped.  You can download the zip file from within the %s directory' % loc
 	sendEmail('mcoppola832@gmail.com', emailTo, subject, body)

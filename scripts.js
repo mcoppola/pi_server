@@ -1,4 +1,6 @@
-class Scripts(object):
+function Scripts () {
+
+}
 	
 Scripts.prototype.stdoutDisplay = function (canvas) {
 	window.onload = function () {(
@@ -14,7 +16,7 @@ Scripts.prototype.stdoutDisplay = function (canvas) {
 	        var fso = new ActiveXObject('Scripting.FileSystemObject'),
 	        iStream=fso.OpenTextFile('site/scripts/ziplog', 1, false);
 		    while(!iStream.AtEndOfStream) {
-		        document.body.innerHTML += iStream.ReadLine() + '<br/>';
+		        document.body.p += iStream.ReadLine() + '<br/>';
 		    }        
 		    iStream.Close();
 

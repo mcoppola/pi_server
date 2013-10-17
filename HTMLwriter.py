@@ -1,10 +1,10 @@
-import scripts
 
 class HTMLwriter(object):
-	script = new Scripts()
+	
 
 	def __init__(self):
 		super(HTMLwriter, self).__init__()
+
 
 	# def header(self, user, loc):
  #        return ('''<!DOCTYPE html><html></html><body><h3>%s %s</h3>'''% (user, loc))
@@ -33,7 +33,17 @@ class HTMLwriter(object):
 
 
 	def mkzip_prompt(self, account, loc):
-		return ('''<h>Zip directory: %s / %s</h>
+		return ('''
+				<!DOCTYPE html>
+				<html>
+				<head>
+				  <meta charset = "utf-8">
+				    <title>room 1</title>
+				    <link rel="stylesheet" href="style.css">
+				    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+				  </head>
+				  <body>
+				<h>Zip directory: %s / %s</h>
 				<p>Compress directory into a .zip file.  This will take a while depending on the size of the directory.  
 				Enter your email below to be notified when the zip is complete.
 				Once you press "ZIP" please do not press back.</p>
@@ -42,9 +52,19 @@ class HTMLwriter(object):
 				<input type="text" name="email" placeholder="email" />
 				<input type="submit" value="ZIP" /> </small>
 				</form>
-				''' %(account, loc, account, loc)) +'''
-				<canvas id='canvas' width='1000' height='200'></canvas>
-				<script>''' + script.stdoutDisplay() '''/<script>'''
+				<p id="stdout">ziplog</p>
+				</body>
+				<script>
+				$(document).ready(function(){
+					setInterval(function() {
+						$('#stdout').load('ziplog');
+					}, 1000);
+
+				});
+
+				</script>
+				
+				</html>''' %(account, loc, account, loc))
 
 
 	def genFolderLinks(self, account, loc):
