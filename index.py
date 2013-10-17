@@ -4,7 +4,7 @@
 import os, time, shutil, zipfile, datetime, subprocess
 from bottle import route, run, request, redirect, FlupFCGIServer, static_file
 from HTMLwriter import HTMLwriter
-from util import zipdir, formatLoc, unzip, unzipReplace
+from util import zipdir, formatLoc, unzip, unzipReplace, sendEmail
 
 
 @route('/', method='GET')
@@ -218,13 +218,29 @@ def doReplace(account, loc):
 	else:
 		return 'error, directory was not replaced'	
 
-@route('/mkzip/<account>/<loc>')
-def makeZip(account, loc):
+
+@route('/mkzip_prompt/<account>/<loc>', method='GET')
+def makeZipPrompt(account, loc):
+	global user
+	checkLogin(user)
+	checkAccess()
+	return html.mkzip_prompt(account, loc)
+
+@route('/mkzip_prompt/<account>/<loc>', method='POST')
+def domakeZipPrompt(account, loc):
+	email = request.forms.get('email')
+	redirect ('/mkzip/'+account+'/'+loc+'/'+email)
+
+@route('/mkzip/<account>/<loc>/<emailTo>')
+def makeZip(account, loc, emailTo):
 	global user
 	checkLogin(user)
 	checkAccess()
 	#make zip of directory
-	zipdir('data/' + account + '/' + loc + '/' + loc + '.zip', 'data/' + account + '/' + loc)
+	subprocess.call('site/scripts/zip.sh ' + account + ' ' + loc, shell=True)
+	subject = '%s has been Zipped!' % loc
+	body = loc + ' has been zipped.  You can download the zip file from within the %s directory' % loc
+	sendEmail('mcoppola832@gmail.com', emailTo, subject, body)
 	redirect ('/account/' + account + '/' + loc)
 
 @route('/addPTX/<account>/<loc>')
@@ -447,7 +463,7 @@ def logger(action, loc):
 #locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc', 'museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom']}
+groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc', 'museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()

@@ -25,9 +25,23 @@ class HTMLwriter(object):
 
 	def proToolsLinks(self, account, loc):
 		return (' <small><a title="replace this directory with a zip file" href="/replace/' + account + '/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
-					+ '<a title="compress this directory into a .zip file, may take a while" href="/mkzip/' + account + '/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
+					+ '<a title="compress this directory into a .zip file" href="/mkzip_prompt/' + account + '/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
 					+ '<a title="upload new audio instead of replacing the entire directory" href="/addAudio/' + account + '/' + loc + '" style="text-decoration: none;">add audio</a>' + ' | '
 					+ '<a title="upload a new ptf or ptx file" href="/addPTX/' + account + '/' + loc + '"  style="text-decoration: none;">add ptx</a> </small>')
+
+
+	def mkzip_prompt(self, account, loc):
+		return ('''<h>Zip directory: %s / %s</h>
+				<p>Compress directory into a .zip file.  This will take a while depending on the size of the directory.  
+				Enter your email below to be notified when the zip is complete.
+				Once you press "ZIP" please do not press back.</p>
+				<form action="/mkzip_prompt/%s/%s" method="post"
+				enctype="multipart/form-data"> <small>
+				<input type="text" name="email" placeholder="email" />
+				<input type="submit" value="ZIP" /> </small>
+				</form>
+				''' %(account, loc, account, loc))
+
 
 	def genFolderLinks(self, account, loc):
 		if (loc == ''):
