@@ -1,5 +1,7 @@
+import scripts
 
 class HTMLwriter(object):
+	script = new Scripts()
 
 	def __init__(self):
 		super(HTMLwriter, self).__init__()
@@ -40,7 +42,9 @@ class HTMLwriter(object):
 				<input type="text" name="email" placeholder="email" />
 				<input type="submit" value="ZIP" /> </small>
 				</form>
-				''' %(account, loc, account, loc))
+				''' %(account, loc, account, loc)) +'''
+				<canvas id='canvas' width='1000' height='200'></canvas>
+				<script>''' + script.stdoutDisplay() '''/<script>'''
 
 
 	def genFolderLinks(self, account, loc):
