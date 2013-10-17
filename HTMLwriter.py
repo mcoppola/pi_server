@@ -41,6 +41,14 @@ class HTMLwriter(object):
 				    <title>room 1</title>
 				    <link rel="stylesheet" href="style.css">
 				    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+				  	<script>
+						$(document).ready(function(){
+							setInterval(function() {
+								$('#stdout').load('ziplog');
+							}, 1000);
+
+						});
+					</script>
 				  </head>
 				  <body>
 				<h>Zip directory: %s / %s</h>
@@ -54,16 +62,6 @@ class HTMLwriter(object):
 				</form>
 				<p id="stdout">ziplog</p>
 				</body>
-				<script>
-				$(document).ready(function(){
-					setInterval(function() {
-						$('#stdout').load('ziplog');
-					}, 1000);
-
-				});
-
-				</script>
-				
 				</html>''' %(account, loc, account, loc))
 
 
