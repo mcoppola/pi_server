@@ -19,7 +19,7 @@ class ZipDir ( threading.Thread ):
 		subject = '%s has been Zipped!' % self.loc
 		body = self.loc + ' has been zipped.  You can download the zip file from within the %s directory' % self.loc
 		sendEmail('mcoppola832@gmail.com', self.emailTo, subject, body)
-		redirect ('/account/' + self.account + '/' + self.loc)
+		#redirect ('/account/' + self.account + '/' + self.loc)
 
 #-------------------------------------------------------------------------//
 
@@ -46,7 +46,7 @@ def do_login():
 			else:
 				return html.head + html.index + 
 					html.loginForm + html.linksFooter
-					+ 'Wrong password.  Try again.'
+					+ '<br><p>Wrong password.  Try again.</p>'
 		else:
 			count+=1
 
