@@ -21,7 +21,6 @@ class ZipDir ( threading.Thread ):
 		sendEmail('mcoppola832@gmail.com', self.emailTo, subject, body)
 		redirect ('/account/' + self.account + '/' + self.loc)
 
-
 #-------------------------------------------------------------------------//
 
 @route('/', method='GET')
@@ -45,7 +44,9 @@ def do_login():
 				access = True
 				redirect('/home/' + user)
 			else:
-				return 'Wrong password.  Press back to try again'
+				return html.head + html.index + 
+					html.loginForm + html.linksFooter
+					+ 'Wrong password.  Try again.'
 		else:
 			count+=1
 
@@ -445,7 +446,6 @@ def accountGenericLoc2Hack(account, dir, loc, loc2):
 def changePassword(user):
 	return 'not available'
 
-
 @route('/noaccess')
 def noAccess():
 	return html.noAccess
@@ -475,7 +475,7 @@ def logger(action, loc):
 #locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc', 'museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys']}
+groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()

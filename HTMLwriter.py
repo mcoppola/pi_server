@@ -38,12 +38,12 @@ class HTMLwriter(object):
 				<html>
 				<head>
 				  <meta charset = "utf-8">
-				    <title>room 1</title>
+				    <title>mc</title>
 				    <link rel="stylesheet" href="style.css">
 				  </head>
 				  <body>
 				<h>Zip directory: %s / %s</h>
-				<p>Compress directory into a .zip file.  This will take a while depending on the size of the directory.  
+				<p>Compress directory into a .zip file.  This will take a while.  
 				Enter your email below to be notified when the zip is complete.
 				Once you press "ZIP" please do not press back.</p>
 				<form action="/mkzip_prompt/%s/%s" method="post"
@@ -60,13 +60,17 @@ class HTMLwriter(object):
 				<html>
 				<head>
 				  <meta charset = "utf-8">
-				    <title>room 1</title>
+				    <title>mc</title>
 				    <link rel="stylesheet" href="style.css">
 				    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 				  	<script>
 						$(document).ready(function(){
+							var txt = '/file/ziplog';
 							setInterval(function() {
-								$('#stdout').load('/file/ziplog');
+								$('#stdout').load(function (){
+								    $.get(file,function(txt){
+								        save(txt.responseText.replace(/\n/g, "<br />");
+								    }););
 							}, 1000);
 
 						});

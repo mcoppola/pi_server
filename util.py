@@ -63,24 +63,10 @@ def sendEmail(From, To, subject, body):
     import smtplib
     from email.mime.text import MIMEText
 
-    # Open a plain text file for reading.  For this example, assume that
-    # the text file contains only ASCII characters.
-    #fp = open(textfile, 'rb')
-    # Create a text/plain message
-    #msg = MIMEText(message)
-    #fp.close()
-
-    # me == the sender's email address
-    # you == the recipient's email address
-    # msg['Subject'] = 'Your directory has been zipped!'
-    # msg['From'] = From
-    # msg['To'] = To
-
     msg = "From: %s\r\nTo: %s\r\nSubject: %s\r\n%s" % (From,To,subject,body)
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-
     server = smtplib.SMTP('smtp.gmail.com',587) #port 465 or 587
     server.ehlo()
     server.starttls()
