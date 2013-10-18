@@ -16,13 +16,13 @@ class HTMLwriter(object):
  	def museyHeader(self, loc):
  		return '''<html><head></head>
 				<body>
-				<h id=museyhead>museyroom album / %s </h> <br>
+				<h >museyroom album / %s </h> <br>
 				''' % loc
 
 	def genHeader(self, user, loc = ''):
 		return '''<html><head></head>
 				<body>
-				<h id=museyhead>%s / %s </h> <br>
+				<h id="genheader">%s / %s </h> <br>
 				''' % (user, loc)
 
 	def proToolsLinks(self, account, loc):
@@ -43,7 +43,7 @@ class HTMLwriter(object):
 				  </head>
 				  <body>
 				<h>Zip directory: %s / %s</h>
-				<p>Compress directory into a .zip file.  This will take a whilesize of the directory.  
+				<p>Compress directory into a .zip file.  This will take a while.  
 				Enter your email below to be notified when the zip is complete.
 				Once you press "ZIP" please do not press back.</p>
 				<form action="/mkzip_prompt/%s/%s" method="post"
@@ -120,18 +120,18 @@ class HTMLwriter(object):
 					</form>
 					''' %(account, loc))
 
-	def uploadNewSongZip(self):
+	def uploadNewSongZip(self, account):
 		return ('''<h>Add Song</h>
 				<p>Upload a compressed .zip file of the entire Pro Tools Session
 				directory.  This will take a while to upload.  After you press upload, please do not press back.
 				After it is done uploading, it will still take a few minutes to unzip.  
 				When this is complete it will be located in your home directory.</p>
-				<form action="/addSong" method="post"
+				<form action="/addSong/%s" method="post"
 				enctype="multipart/form-data"> <small>
 				<input type="file" name="upload" />
 				<input type="submit" value="Upload" /> </small>
 				</form>
-				''')		
+				'''% account)		
 
 	def uploadPTX(self, account, loc):
 		return ('''<h>add pro tools session file (ptx/ptf)</h>
@@ -179,10 +179,10 @@ class HTMLwriter(object):
 				&nbsp;|&nbsp;
 				<a href= /account/%s > go up </a>
 				&nbsp;|&nbsp;
-				<a href= /addSong> add song </a>
+				<a href= /addSong/%s> add song </a>
 				&nbsp;|&nbsp;
 				<a href= /logout > logout </a> </small>
-				''' % (user, account)
+				''' % (user, account, account)
 	
 	def homeFooter(self, user):
 		return '''<small> <a href= pass/%s > change password </a>

@@ -44,9 +44,7 @@ def do_login():
 				access = True
 				redirect('/home/' + user)
 			else:
-				return html.head + html.index + 
-					html.loginForm + html.linksFooter
-					+ '<br><p>Wrong password.  Try again.</p>'
+				return html.head + html.index + html.loginForm + html.linksFooter + '<br><p>Wrong password.  Try again.</p>'
 		else:
 			count+=1
 
@@ -207,7 +205,7 @@ def doReplace(account, loc):
 	upload = request.files.get('upload')
 	if(upload.filename and upload.filename.endswith('.zip')):
 		fn = os.path.basename(upload.filename)
-		open('data/' + user + '/' + fn, 'w').write(upload.file.read())
+		open('data/' + account + '/' + fn, 'w').write(upload.file.read())
 		print 'file %s was upload' % fn
 		#move directory to _previous
 		try:
@@ -279,11 +277,11 @@ def doAddPTX(account, loc):
 			shutil.move('data/' + account + '/' + loc + '/' + fn, 'data/' + account + '/' + loc + '/Session File Backups/' + newName)
 			#write new session file
 			open('data/' + account + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
-			logger('addPTX', loc)
+			logger('addPTX', loc, account)
 			redirect('/account/' + account + '/' + loc)
 		except:
 			open('data/' + account + "/" + loc + '/' + fn, 'wb').write(upload.file.read())
-			logger('addPTX', loc)
+			logger('addPTX', loc, account)
 			redirect('/account/' + account + '/' + loc)
 	return 'no file was uploaded'
 
@@ -310,7 +308,7 @@ def doAddSong(account):
 			os.mkdir('data/' + account + '/' + dirName)
 		unzip('data/' + account + '/' + fn, 'data/' + account + '/' + dirName)
 		os.remove('data/' + account + '/' + fn)
-		logger('addSong', fn)
+		logger('addSong', fn, account)
 		redirect('/account/' + account)
 
 @route('/addAudio/<account>/<loc>')
@@ -465,12 +463,12 @@ def checkAccess():
 	if not access:
 		redirect('/noaccess')
 
-def logger(action, loc):
+def logger(action, loc, account):
 	global user
-	log = open('site/' + user + '/log.text').read()
+	log = open('site/' + account + '/log.text').read()
 	newlog = '<li>' + str(datetime.datetime.now()) + ' : ' + user + logActions[action] + loc + '</li><br>'
 	log = str(newlog) + str(log)
-	open('site/' + user + '/log.txt', 'wb').write(log)
+	open('site/' + account + '/log.txt', 'wb').write(log)
 
 #locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
