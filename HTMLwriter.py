@@ -201,6 +201,6 @@ class HTMLwriter(object):
 	# 			<body>'''
 
 	museyFooter = '''</ol></body></html>'''
-
-	logHeader = '''<br><br><h>activity log /</h><small><ul>'''
+	linksHeader = '''<br><br><h>links /</h><ul>'''
+	logHeader = '''</ul><br><br><h>activity log /</h><small><ul>'''
 

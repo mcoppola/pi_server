@@ -184,7 +184,8 @@ def printProToolsDirectory(account, loc):
 	fl.write(html.museyFooter + html.folderLinksFooter(user, account))
 	if( loc == ''):
 		log = open('site/' + account + '/log.txt').read()
-		fl.write(html.logHeader + str(log))
+		links = open('site/' + account + '/links.txt').read()
+		fl.write(html.linksheader + str(links) + html.groupHeader + str(log))
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
