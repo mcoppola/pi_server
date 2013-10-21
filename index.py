@@ -482,4 +482,4 @@ access = True
 password = ''
 loggedIn = ''
 #on pi server=FlupFCGIServer
-run(host='127.0.0.1', port=8080)
+run(host='127.0.0.1', port=8080, server=FlupFCGIServer)

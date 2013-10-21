@@ -8,3 +8,4 @@ echo $1
 echo $2
 #echo <p> > site/script/ziplogs
 zip -r data/$1/$2/$2.zip data/$1/$2/ > ziplog
+echo '<br><br>DONE' >> ziplog
