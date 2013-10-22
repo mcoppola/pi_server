@@ -185,7 +185,7 @@ def printProToolsDirectory(account, loc):
 	if( loc == ''):
 		log = open('site/' + account + '/log.txt').read()
 		links = open('site/' + account + '/links.txt').read()
-		fl.write(html.linksheader + str(links) + html.groupHeader + str(log))
+		fl.write(html.linksHeader + str(links) + html.logHeader + str(log))
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
