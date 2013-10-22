@@ -474,7 +474,7 @@ def logger(action, loc, account):
 #locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom'], 'david':['david', 'drunken_bear'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys']}
+groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys'] 'caddy':['caddy']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()
