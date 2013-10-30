@@ -185,7 +185,7 @@ def printProToolsDirectory(account, loc):
 	if( loc == ''):
 		log = open('site/' + account + '/log.txt').read()
 		links = open('site/' + account + '/links.txt').read()
-		fl.write(html.linksHeader + str(links) + html.logHeader + str(log))
+		fl.write(html.linksHeader(account) + str(links) + html.logHeader + str(log))
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -445,6 +445,25 @@ def accountGenericLoc2Hack(account, dir, loc, loc2):
 def changePassword(user):
 	return 'not available'
 
+# ADD LINK ------------------------------------------------/
+@route('/addlink/<account>', method='GET')
+def addLink(account):
+	global user
+	checkLogin(user)
+	return html.addLinkForm(account)
+
+@route('/addlink/<account>', method='POST')
+def doAddLink(account):
+	global user
+	checkLogin(user)
+	title = request.forms.get('title')
+	url = request.forms.get('url')
+	if url.startswith('https://'):
+		url = url[7:]
+	with open("site/%s/links.txt" % account, "a") as linksFile:
+		linksFile.write('<br><a href="https://%s" target="_blank">%s</a>' %(url, title))
+	redirect('/account/%s' % account)
+
 @route('/noaccess')
 def noAccess():
 	return html.noAccess
@@ -474,7 +493,7 @@ def logger(action, loc, account):
 #locActions (action: description)
 logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys'] 'caddy':['caddy']}
+groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys'], 'caddy':['caddy']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()

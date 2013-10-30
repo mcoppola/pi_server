@@ -201,6 +201,20 @@ class HTMLwriter(object):
 	# 			<body>'''
 
 	museyFooter = '''</ol></body></html>'''
-	linksHeader = '''<br><br><h>links /</h><ul>'''
-	logHeader = '''</ul><br><br><h>activity log /</h><small><ul>'''
+	#linksHeader = '''<br><br><h>links /</h><ul>'''
+	def linksHeader(self, account):
+		return '''
+			<br><br><h>links / <a href= /addlink/%s title="add link">+</a></h><ul>
+			''' % account
+	def addLinkForm(self, account):
+		return '''<html>
+				<h>Add link</h>
+	            <form action="/addlink/%s" method="post">
+	            title:    <input type="text" name="title" /> 
+	            url: <input type="text" name="url" />
+	            <input type="submit" value="Add Link" />
+	            </form></small>
+	            ''' % account
+
+	logHeader = '''</ul><br><h>activity log /</h><small><ul>'''
 
