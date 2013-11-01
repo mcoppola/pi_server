@@ -485,7 +485,7 @@ def checkAccess():
 
 def logger(action, loc, account):
 	global user
-	log = open('site/' + account + '/log.text').read()
+	log = open('site/' + account + '/log.txt').read()
 	newlog = '<li>' + str(datetime.datetime.now()) + ' : ' + user + logActions[action] + loc + '</li><br>'
 	log = str(newlog) + str(log)
 	open('site/' + account + '/log.txt', 'wb').write(log)
