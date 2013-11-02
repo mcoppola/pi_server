@@ -155,6 +155,7 @@ class HTMLwriter(object):
 				ga('create', 'UA-43748849-1', 'no-ip.biz');
 				ga('send', 'pageview');
 				</script>
+				<link rel="stylesheet" type="text/css" href="file/style.css">
 			   </head>'''
 
 	noAccess = head + 'You do not have access to this page. ' + '<a href="/login">home</a>'
@@ -162,16 +163,18 @@ class HTMLwriter(object):
 	index = '''<h id=header></h> </html>'''
 	
 	loginForm = '''<html>
+				<div class="center_login">
+				<img src="file/churdump.jpg" width="150" height="240">
 	            <form action="/login" method="post">
-	            user:    <input type="text" name="login" /> 
-	            password: <input type="password" name="password" />
-	            <input type="submit" value="Login" />
+	            <input type="text" name="login" placeholder="username" style="width: 100%"/> <br>
+	            <input type="password" name="password" placeholder="password" style="width: 100%"/> <br>
+	            <input type="submit" value="Login" style="width: 100%"/>
 	            </form></small>
 	            '''
 
 	linksFooter = '''<small> <a href= /master > add user </a>
 				&nbsp;|&nbsp;
-				<a href= /about > about  </a> </small>
+				<a href= /about > about  </a> </small></div>
 				'''
 
 	def folderLinksFooter(self, user, account): 
@@ -190,10 +193,10 @@ class HTMLwriter(object):
 				<a href= /logout > logout </a> </small>
 				''' % user
 
-	about = loginForm + '''<html> <small> <p> This is a private server hosted by matthew coppola. <br>
-                I can be reached at mcoppola832@gmail.com  &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small> </html>'''
+	about = head + loginForm + '''</div> <div class="center_links"><html> <small> <p> This is a private server hosted by matthew coppola. <br>
+                I can be reached at mcoppola832@gmail.com  &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small></div></html> '''
 
-	addUser = loginForm + '''<html> <small> <p>feature not available, contact me at mcoppola832@gmail.com &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small> </html>'''
+	addUser = head + loginForm + '''</div> <div class="center_links"> <small> <p>feature not available, contact me at mcoppola832@gmail.com &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small></div> </html>'''
 
 	# museyHeader = '''<html><head><link rel="stylesheet" href="style.css"></head>
 	# 			<body>
