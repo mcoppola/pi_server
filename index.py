@@ -47,6 +47,8 @@ def do_login():
 				return html.head + html.index + html.loginForm + html.linksFooter + '<br><p>Wrong password.  Try again.</p>'
 		else:
 			count+=1
+	return html.head + html.index + html.loginForm + html.linksFooter + '<br><p>Username not found.</p>'
+
 
 @route('/logout')
 def logout():
