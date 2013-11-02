@@ -172,7 +172,7 @@ class HTMLwriter(object):
 	            </form></small>
 	            '''
 
-	linksFooter = '''<small> <a href= /master > add user </a>
+	linksFooter = '''<small> <a href= /master > new user </a>
 				&nbsp;|&nbsp;
 				<a href= /about > about  </a> </small></div>
 				'''
