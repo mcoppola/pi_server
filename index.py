@@ -25,7 +25,7 @@ class ZipDir ( threading.Thread ):
 
 @route('/', method='GET')
 def index():
-	return html.head + html.index + html.loginForm + html.linksFooter
+	return html.head + html.loginForm + html.linksFooter + html.foot
 
 @route('/login', method='GET')
 def login():
@@ -91,12 +91,11 @@ def userHome(user):
 	checkLogin(user)
 	global groups
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.genHeader(user))
-	fl.write('<ul style="list-style-type:circle">')
+	fl.write(html.head + html.genHeader(user, '', user) + html.accountListHeader)
 	for g in groups[user]:
 		fl.write('<a href="/account/' + g + '"><li>' + g + '</li></a> \n')
-	fl.write('</ul> </ol>')
-	fl.write(html.homeFooter(user))
+	fl.write('</ul> </ol> </div>')
+	fl.write(html.homeFooter(user) + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -115,7 +114,7 @@ def mcHome():
 def printGenDirectory(account, loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.genHeader(account, formatLoc(loc)))
+	fl.write(html.head + html.genHeader(account, formatLoc(loc), user))
 	fl.write(html.genFolderLinks(account, loc))
 	if (loc != ''):
 		loca = loc + '/'
@@ -136,7 +135,7 @@ def printGenDirectory(account, loc):
 				+ str(size) + ' bytes' +  ' | '
 				+ str(date) + '</li>' + '\n')
 		break
-	fl.write(html.museyFooter + html.folderLinksFooter(user, account))
+	fl.write(html.museyFooter + html.folderLinksFooter(user, account) + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -144,7 +143,7 @@ def printGenDirectory(account, loc):
 def printProToolsDirectory(account, loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.genHeader(account, formatLoc(loc)))
+	fl.write(html.head + html.genHeader(account, formatLoc(loc), user))
 	if (loc != ''):
 		fl.write(html.proToolsLinks(account, loc))
 		loca = loc + '/'
@@ -181,13 +180,14 @@ def printProToolsDirectory(account, loc):
 					+ f + '</a>' + ' | '
 					+ str(size) + ' bytes' +  ' | '
 					+ str(date) + '</li>' + '\n')
+			fl.write('</ol>')
 		break
 	
-	fl.write(html.museyFooter + html.folderLinksFooter(user, account))
+	fl.write(html.folderLinksFooter(user, account))
 	if( loc == ''):
 		log = open('site/' + account + '/log.txt').read()
 		links = open('site/' + account + '/links.txt').read()
-		fl.write(html.linksHeader(account) + str(links) + html.logHeader + str(log))
+		fl.write(html.linksHeader(account) + str(links) + html.logHeader + str(log) + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -504,4 +504,4 @@ access = True
 password = ''
 loggedIn = ''
 #on pi server=FlupFCGIServer
-run(host='127.0.0.1', port=8080, server=FlupFCGIServer)
+run(host='127.0.0.1', port=8080)

@@ -1,6 +1,5 @@
 body {
 	width: 100%;
-	text-align: center;
 }
 h2 {
 	font-size: 12px:
@@ -9,6 +8,7 @@ div.center_login
 {
   width : 180px;
   display: block;
+  text-align: center;
   margin-left: auto;
   margin-right: auto;
 }
@@ -18,4 +18,8 @@ div.center_links
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+div.accountHeader{
+  display: block;
+  text-align: left;
 }

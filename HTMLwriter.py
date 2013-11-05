@@ -14,16 +14,53 @@ class HTMLwriter(object):
  					'''
 
  	def museyHeader(self, loc):
- 		return '''<html><head></head>
+ 		return '''
+ 				<html><head></head>
 				<body>
 				<h >museyroom album / %s </h> <br>
 				''' % loc
 
-	def genHeader(self, user, loc = ''):
-		return '''<html><head></head>
-				<body>
-				<h id="genheader">%s / %s </h> <br>
+	def genHeader(self, user, loc = '', username= ''):
+		return '''
+				<div class="container">
+
+			      <div class="navbar navbar-default">
+			        <div class="navbar-header">
+			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			          </button>
+			          <a class="navbar-brand" href="#">%s / %s </a>
+			        </div>
+			        <div class="navbar-collapse collapse">
+			          <ul class="nav navbar-nav">
+			            <li class="active"><a href="#">Link</a></li>
+			            <li><a href="#">Link</a></li>
+			            <li><a href="#">Link</a></li>
+			            <li class="dropdown">
+			              <a data-target="#" href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">Action</a></li>
+			                <li><a href="#">Another action</a></li>
+			                <li><a href="#">Something else here</a></li>
+			                <li class="divider"></li>
+			                <li class="dropdown-header">Nav header</li>
+			                <li><a href="#">Separated link</a></li>
+			                <li><a href="#">One more separated link</a></li>
+			              </ul>
+			            </li>
+			          </ul>
+			          <ul class="nav navbar-nav navbar-right">
+			            <li><a href= /logout > logout </a> </small></li>
+			          </ul>
+			        </div><!--/.nav-collapse -->
+			      </div><!--/.navbar navbar-default -->
 				''' % (user, loc)
+
+	accountListHeader = ''' <div class="accountList">
+							<ul style="list-style-type:circle">
+						'''
 
 	def proToolsLinks(self, account, loc):
 		return (' <small><a title="replace this directory with a zip file" href="/replace/' + account + '/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
@@ -38,7 +75,7 @@ class HTMLwriter(object):
 				<html>
 				<head>
 				  <meta charset = "utf-8">
-				    <title>room 1</title>
+				    <title>mc</title>
 				    <link rel="stylesheet" href="style.css">
 				  </head>
 				  <body>
@@ -60,7 +97,7 @@ class HTMLwriter(object):
 				<html>
 				<head>
 				  <meta charset = "utf-8">
-				    <title>room 1</title>
+				    <title>mc</title>
 				    <link rel="stylesheet" href="style.css">
 				    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 				  	<script>
@@ -144,19 +181,34 @@ class HTMLwriter(object):
 				</form>
 				''' %(account, loc))
 
-	head = '''<head>
+	head = '''
+			<html lang="en">
+			<head>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			  <meta charset = "utf-8">
-				<title>mc</title>
-				<script>
-				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-				})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-				ga('create', 'UA-43748849-1', 'no-ip.biz');
-				ga('send', 'pageview');
-				</script>
-				<link rel="stylesheet" type="text/css" href="file/style.css">
-			   </head>'''
+					<title>mc</title>
+						<script>
+						(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+						(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+						m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+						})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+						ga('create', 'UA-43748849-1', 'no-ip.biz');
+						ga('send', 'pageview');
+						</script>
+
+					<link href="/file/navbar.css" rel="stylesheet">	
+					<link href="/file/bootstrap.css" rel="stylesheet">
+					<link rel="stylesheet" type="text/css" href="/file/style.css">
+				</head>
+			   <body>
+			   	'''
+
+	foot = '''		</div>  <!--/.container -->
+					<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    				<script href="/file/bootstrap.min.js"></script>
+  				</body>
+			</html>
+			'''
 
 	noAccess = head + 'You do not have access to this page. ' + '<a href="/login">home</a>'
 
