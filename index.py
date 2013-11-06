@@ -61,6 +61,11 @@ def logout():
 def about():
 	return html.about
 
+# STATIC FILE RETURN ----------------------------------------/
+@route('/static/<filename>')
+def server_static(filename):
+    return static_file(filename, root='./')
+
 @route('/file/<file>')
 def returnFile(file):
 	return open(file, 'r')
@@ -93,8 +98,8 @@ def userHome(user):
 	fl = open('site/html_gen.txt', 'w')
 	fl.write(html.head + html.genHeader(user, '', user) + html.accountListHeader)
 	for g in groups[user]:
-		fl.write('<a href="/account/' + g + '"><li>' + g + '</li></a> \n')
-	fl.write('</ul> </ol> </div>')
+		fl.write('<a href="/account/' + g + '" class="list-group-item">' + g + '</a> \n')
+	fl.write('</div></div>')
 	fl.write(html.homeFooter(user) + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')

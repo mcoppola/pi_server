@@ -31,15 +31,12 @@ class HTMLwriter(object):
 			            <span class="icon-bar"></span>
 			            <span class="icon-bar"></span>
 			          </button>
-			          <a class="navbar-brand" href="#">%s / %s </a>
 			        </div>
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
-			            <li class="active"><a href="#">Link</a></li>
-			            <li><a href="#">Link</a></li>
-			            <li><a href="#">Link</a></li>
+			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
 			            <li class="dropdown">
-			              <a data-target="#" href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" >Dropdown <b class="caret"></b></a>
 			              <ul class="dropdown-menu">
 			                <li><a href="#">Action</a></li>
 			                <li><a href="#">Another action</a></li>
@@ -50,16 +47,28 @@ class HTMLwriter(object):
 			                <li><a href="#">One more separated link</a></li>
 			              </ul>
 			            </li>
+			            <li><a class="navbar-brand" href="#">%s / %s </a>
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
-			            <li><a href= /logout > logout </a> </small></li>
+			          	<li class="dropdown">
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">Change Password</a></li>
+			                <li><a href="#">Change Email</a></li>
+			                <li class="divider"></li>
+			                <li><a href="/logout">Logout</a></li>
+			              </ul>
+			            </li>
 			          </ul>
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
-				''' % (user, loc)
+				''' % (username, user, loc, username)
 
-	accountListHeader = ''' <div class="accountList">
-							<ul style="list-style-type:circle">
+	accountListHeader = ''' 
+							<div class="panel panel-info" style="width:300px">
+							<div class="panel-heading">Pro Tools Projects</div>
+							<div class="list-group">
+							
 						'''
 
 	def proToolsLinks(self, account, loc):
@@ -103,7 +112,7 @@ class HTMLwriter(object):
 				  	<script>
 						$(document).ready(function(){
 							setInterval(function() {
-								$('#stdout').load('/file/ziplog');
+								$('#stdout').load('/static/ziplog');
 							}, 1000);
 
 						});
@@ -182,30 +191,23 @@ class HTMLwriter(object):
 				''' %(account, loc))
 
 	head = '''
+			<!DOCTYPE html>
 			<html lang="en">
 			<head>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			  <meta charset = "utf-8">
 					<title>mc</title>
-						<script>
-						(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-						(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-						m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-						})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-						ga('create', 'UA-43748849-1', 'no-ip.biz');
-						ga('send', 'pageview');
-						</script>
-
-					<link href="/file/navbar.css" rel="stylesheet">	
-					<link href="/file/bootstrap.css" rel="stylesheet">
-					<link rel="stylesheet" type="text/css" href="/file/style.css">
+					<link href="/static/style.css" rel="stylesheet">
+					<link href="/static/navbar.css" rel="stylesheet">
+					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 				</head>
 			   <body>
 			   	'''
 
 	foot = '''		</div>  <!--/.container -->
-					<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    				<script href="/file/bootstrap.min.js"></script>
+					<script src="http://code.jquery.com/jquery-1.9.1.min.js" type="text/javascript"></script>
+					<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>						
   				</body>
 			</html>
 			'''
