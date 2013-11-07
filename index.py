@@ -118,37 +118,46 @@ def userHome(user):
 def about():
 	return html.addUser
 
-@route('/mc', method='GET')
-def mcHome():
-	checkLogin('mc')
-	return 'welcome matthew'
-
 
 def printGenDirectory(account, loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
 	fl.write(html.head + html.proToolsProjectHeader(account, formatLoc(loc), user))
-	fl.write(html.genFolderLinks(account, loc))
 	if (loc != ''):
 		loca = loc + '/'
 	else:
 		loca = loc
 	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
 		count = 0
-		fl.write('<ul style="list-style-type:circle">')
+		fl.write(html.songListHeader)
 		for f in dirs:
-			fl.write('<a href="/account/' + account + '/' + loca + f + '"><li>' + f + '</li></a> \n')
-		fl.write('</ul> <ol>')
-		for f in files:
-			count = count + 1
-			size = os.path.getsize('data/' + account + '/' + loc + '/' + f)
-			date = time.ctime(os.path.getmtime('data/' + account + '/' + loc + '/' + f))
-			fl.write('<li>' + '<a href="/' + account + '/down/' + loca + str(count) + '">'
-				+ f + '</a>' + ' | '
-				+ str(size) + ' bytes' +  ' | '
-				+ str(date) + '</li>' + '\n')
+			fl.write('<a href="/account/' + account + '/' + loca + f + '"><li class="list-group-item">' + f + '</li></a> \n')
+		# for f in files:
+		# 	count = count + 1
+		# 	size = os.path.getsize('data/' + account + '/' + loc + '/' + f)
+		# 	date = time.ctime(os.path.getmtime('data/' + account + '/' + loc + '/' + f))
+		# 	fl.write('<li>' + '<a href="/' + account + '/down/' + loca + str(count) + '">'
+		# 		+ f + '</a>' + ' | '
+		# 		+ str(size) + ' bytes' +  ' | '
+		# 		+ str(date) + '</li>' + '\n')
 		break
-	fl.write(html.museyFooter + html.folderLinksFooter(user, account) + html.foot)
+	fl.write(html.songListFooter + html.notesListHeader)
+
+	# write all notifications
+	with open('site/' + account + '/log.txt', 'r') as logFile:
+		logLines = logFile.readlines()
+	for l in logLines:
+		log = l.split(',')
+		fl.write(html.notification(user, account, log))
+	fl.write(html.notesListFooter + html.linksListHeader(account))
+
+	# write all links
+	with open('site/' + account + '/links.txt', 'r') as f:
+		links = f.readlines()
+	for l in links:
+		fl.write('<li class="list-group-item link-item">' + l + '</li>')
+	fl.write(html.linksListFooter + '</div><!-- /row -->')
+	fl.write(html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -196,11 +205,13 @@ def printProToolsDirectory(account, loc):
 			fl.write('</ol>')
 		break
 	
-	fl.write(html.folderLinksFooter(user, account))
+	
 	if( loc == ''):
 		log = open('site/' + account + '/log.txt').read()
 		links = open('site/' + account + '/links.txt').read()
 		fl.write(html.linksHeader(account) + str(links) + html.logHeader + str(log) + html.foot)
+	else:
+		fl.write(html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt

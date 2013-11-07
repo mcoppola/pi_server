@@ -65,14 +65,15 @@ class HTMLwriter(object):
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
 			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li><a class="navbar-brand" href="#">%s / %s </a>
 			            <li class="dropdown">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
 			              <ul class="dropdown-menu">
+			              	<li role="presentation" class="dropdown-header">Add</li>
 			                <li><a href="#">Song</a></li>
-			                <li><a href="#">Audio</a></li>
+			                <li><a href="#">Collaborator</a></li>
 			              </ul>
 			            </li>
-			            <li><a class="navbar-brand" href="#">%s / %s </a>
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
 			          	<li class="dropdown">
@@ -89,7 +90,7 @@ class HTMLwriter(object):
 			      </div><!--/.navbar navbar-default -->
 				''' % (username, user, loc, username)
 
-	def proToolsSessionHeader(self, user, loc = '', username= ''):
+	def proToolsSessionHeader(self, group, loc = '', username= ''):
 		# NAVBAR for ProTools Folders
 		return '''
 				<div class="container">
@@ -104,15 +105,31 @@ class HTMLwriter(object):
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
 			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li><a class="navbar-brand" href="/account/%s">%s</a>
+			            <a class="navbar-brand" href="#" style="right:25px">/ %s </a></li>
 			            <li class="dropdown">
-			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="right:25px"><i class="glyphicon glyphicon-plus"></i></b></a>
 			              <ul class="dropdown-menu">
+			              	<li role="presentation" class="dropdown-header">Commit</li>
 			                <li><a href="#">PTF</a></li>
 			                <li><a href="#">PTX</a></li>
-			                <li><a href="#">Audio</a></li>
+			                <li class="divider"></li>
+			                <li role="presentation" class="dropdown-header">Add</li>
+			                <li><a href="#">Audio File</a></li>
+			                <li><a href="#">Fade File</a></li>
+			                <li><a href="#">Session Backup</a></li>
+			                <li><a href="#">Zipped Resources</a></li>
 			              </ul>
 			            </li>
-			            <li><a class="navbar-brand" href="#">%s / %s </a>
+			            <li class="dropdown">
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="right:25px"><i class="glyphicon glyphicon-file"></i></b></a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">Make Zip</a></li>
+			                <li><a href="#">Replace Entire Session</a></li>
+			                <li><a href="#">Backup PTX</a></li>
+			                <li><a href="#">Backup PTF</a></li>
+			              </ul>
+			            </li>    
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
 			          	<li class="dropdown">
@@ -127,7 +144,7 @@ class HTMLwriter(object):
 			          </ul>
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
-				''' % (username, user, loc, username)
+				''' % (username, group, group, loc, username)
 	# Log array = [time, song-commited-to, user-who-commited, action, message]
 	def notification(self, user, group, log):
 		return '''<div class="alert alert-dismissable">
@@ -168,7 +185,7 @@ class HTMLwriter(object):
 										</div>
 										<div class="panel-heading">Pro Tools Projects
 										  <span class="pull-right">
-												<a data-toggle="modal" href="#newProjectForm" class="btn btn-primary btn-xs" title="New Project">
+												<a data-toggle="modal" href="#newProjectForm" class="btn btn-default btn-xs" title="New Project">
 												<i class="glyphicon glyphicon-plus"></i></a>
 													    
 													    
@@ -193,6 +210,44 @@ class HTMLwriter(object):
 					'''
 
 	notesListFooter = '''
+							</div><!--/.list-group -->
+							</div><!--/.panel -->
+							</div><!--/.col-md-5 -->
+							
+						'''
+	def linksListHeader(self, account):
+		return '''<div class="col-md-5">
+					<div class="panel panel-success">
+					<div id="newLinkForm" class="modal fade in" role="dialog">
+								<div class="modal-dialog">
+									<div class="modal-content">
+									<div class="modal-header">
+										<a class="close" data-dismiss="modal">x</a>
+										<h3>New Link</h3>
+									</div>
+									<div class="modal-dialog">
+										<form action="/addlink/%s" method="post">
+								            <input type="text" name="title" placeholder="Title"/> 
+								            <input type="text" name="url" placeholder="URL"/>
+								        </form>       
+									</div>
+									<div class="modal-footer">
+										<a href="#" class="btn btn-success">Add Link</a>
+										<a href="#" class="btn" data-dismiss="modal">Close</a>
+									</div>
+									</div><!--./modal-content-->
+								</div><!--./modal-dialog-->
+							</div>
+						<div class="panel-heading">Links
+							<span class="pull-right">
+									<a data-toggle="modal" href="#newLinkForm" class="btn btn-success btn-xs" title="New Link">
+									<i class="glyphicon glyphicon-plus"></i></a>	    
+							  </span>
+						</div>
+							<div class="list-group">
+					'''% (account)
+
+	linksListFooter = '''
 							</div><!--/.list-group -->
 							</div><!--/.panel -->
 							</div><!--/.col-md-5 -->
@@ -347,6 +402,46 @@ class HTMLwriter(object):
 			</html>
 			'''
 
+	songListHeader = '''
+					<div class="row">
+  						<div class="col-md-7">
+							<div class="panel panel-default">
+							<div id="newSongForm" class="modal fade in" role="dialog">
+								<div class="modal-dialog">
+									<div class="modal-content">
+									<div class="modal-header">
+										<a class="close" data-dismiss="modal">x</a>
+										<h3>New Song</h3>
+									</div>
+									<div class="modal-dialog">
+										<form action="/addlink/%s" method="post">
+								            <input type="text" name="title" placeholder="Song Name"/> 
+								            <input type="file" name="zip" placeholder="Zip"/>
+								        </form>       
+									</div>
+									<div class="modal-footer">
+										<a href="#" class="btn btn-success">Add Song</a>
+										<a href="#" class="btn" data-dismiss="modal">Close</a>
+									</div>
+									</div><!--./modal-content-->
+								</div><!--./modal-dialog-->
+							</div>
+					  			<div class="panel-heading">Songs
+					  			<span class="pull-right">
+									<a data-toggle="modal" href="#newSongForm" class="btn btn-default btn-xs" title="New Song">
+									<i class="glyphicon glyphicon-plus"></i></a>	    
+							    </span>
+							    </div>
+					  		
+					  			<ul class="list-group">
+					'''
+	songListFooter = '''
+								</ul><!-- /list-group -->
+							</div><!-- /panel -->
+						</div><!-- /col-md-7 -->
+					
+					'''
+
 	noAccess = head + 'You do not have access to this page. ' + '<a href="/login">home</a>'
 
 	index = '''<h id=header></h> </html>'''
@@ -365,16 +460,6 @@ class HTMLwriter(object):
 				&nbsp;|&nbsp;
 				<a href= /about > about  </a> </small></div>
 				'''
-
-	def folderLinksFooter(self, user, account): 
-		return '''<small> <a href= /home/%s > home </a>
-				&nbsp;|&nbsp;
-				<a href= /account/%s > go up </a>
-				&nbsp;|&nbsp;
-				<a href= /addSong/%s> add song </a>
-				&nbsp;|&nbsp;
-				<a href= /logout > logout </a> </small>
-				''' % (user, account, account)
 	
 	homeFooter ='''
 					</div><!--/.row -->
@@ -390,7 +475,7 @@ class HTMLwriter(object):
 	# 			<h id=museyhead>museyroom album</h>
 	# 			<body>'''
 
-	museyFooter = '''</ol></body></html>'''
+	olFooter = '''</ol>'''
 	#linksHeader = '''<br><br><h>links /</h><ul>'''
 	def linksHeader(self, account):
 		return '''

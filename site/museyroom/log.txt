@@ -1,2 +1,2 @@
-2013-09-02 14:23:20.418695,sounds,jack,ptx commit,Renamed Playlists
-2013-09-01 11:17:53.771751,Balled,matt,+ptx,mixed e-drums
+2013-09-02 14:23:20.418695,sounds,jack,ptf commit,Renamed Playlists
+2013-09-01 11:17:53.771751,Balled,mc,ptx commit,Mixed programmed drums.  Added groups.
