@@ -34,7 +34,6 @@ class HTMLwriter(object):
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
 			            <li class="active"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
-			            <li><a class="navbar-brand" href="#">%s / %s </a>
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
 			          	<li class="dropdown">
@@ -49,7 +48,7 @@ class HTMLwriter(object):
 			          </ul>
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
-				''' % (username, user, loc, username)
+				''' % (username, username)
 
 	def proToolsProjectHeader(self, user, loc = '', username= ''):
 		# NAVBAR for ProTools Folders
@@ -129,6 +128,20 @@ class HTMLwriter(object):
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
 				''' % (username, user, loc, username)
+	# Log array = [time, song-commited-to, user-who-commited, action, message]
+	def notification(self, user, group, log):
+		return '''<div class="alert alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+					&times;
+					</button>
+					<p style="font-size:meduim"><a class="alert-link" href="/account/%s" class="list-group-item">%s</a>,     <!--/.group -->
+					<a class="alert-link" href="/account/%s/%s" class="list-group-item">%s</a>,  <!--/.song -->
+					<span style="color:#999; font-size:small"><medium> %s</medium></span>
+					</p>    <!--/.action -->
+					<p style="font-size:small">
+					<a class="alert-link" href="/user/%s" class="list-group-item">%s</a>: %s</p><!--/.message -->
+					</div>
+				''' % (group, group, group, log[1], log[1], log[3], log[2], log[2], log[4])
 
 	accountListHeader = ''' <div class="row">
   									<div class="col-md-7">
@@ -176,11 +189,12 @@ class HTMLwriter(object):
 	notesListHeader = '''<div class="col-md-5">
 								<div class="panel panel-warning">
 									<div class="panel-heading">Notifications</div>
+										<div class="list-group">
 					'''
 
 	notesListFooter = '''
 							</div><!--/.list-group -->
-							</div><!--/.panel-info -->
+							</div><!--/.panel -->
 							</div><!--/.col-md-5 -->
 							
 						'''

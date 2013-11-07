@@ -105,9 +105,9 @@ def userHome(user):
 	# write all notifications
 	for g in groups[user]:
 		if (g != user):
-			if ':' in open('site/' + g + '/log.txt', 'r').read():
-				log = open('site/' + g + '/log.txt', 'r')
-				fl.write('<div class="alert alert-warningalert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><a class="alert-link" href="/account/' + g + '" class="list-group-item">' + g + '</a><br>' + log.read() + '</div> \n')
+			if ',' in open('site/' + g + '/log.txt', 'r').readline():
+				log = open('site/' + g + '/log.txt', 'r').readline().split(',')
+				fl.write(html.notification(user, g, log))
 	fl.write(html.notesListFooter + html.homeFooter + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
@@ -498,15 +498,15 @@ def checkAccess():
 	if not access:
 		redirect('/noaccess')
 
-def logger(action, loc, account):
+def logger(action, loc, account, message=''):
 	global user
 	log = open('site/' + account + '/log.txt').read()
-	newlog = '<li>' + str(datetime.datetime.now()) + ' : ' + user + logActions[action] + loc + '</li><br>'
+	newlog = str(datetime.datetime.now()) + ',' + loc +  ',' + user + ',' + logActions[action] + ',' + message + '\n'
 	log = str(newlog) + str(log)
 	open('site/' + account + '/log.txt', 'wb').write(log)
 
 #locActions (action: description)
-logActions = {'addPTX': ' added a session file to ', 'addSong': ' added the song '}
+logActions = {'addPTX': '+ptx', 'addPTF': '+ptf', addSong: '+song'}
 #groups (user: [groups])
 groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys'], 'caddy':['caddy']}
 users = open('site/users.txt', 'r').read().splitlines()

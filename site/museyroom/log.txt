@@ -1,1 +1,2 @@
-<li>2013-09-02 14:23:20.418695 : matt added a session file to sounds</li><br><li>2013-09-01 11:17:53.771751 : matt added a session file to Ballad</li>
+2013-09-02 14:23:20.418695,sounds,jack,ptx commit,Renamed Playlists
+2013-09-01 11:17:53.771751,Balled,matt,+ptx,mixed e-drums
