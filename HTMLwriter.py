@@ -5,7 +5,6 @@ class HTMLwriter(object):
 	def __init__(self):
 		super(HTMLwriter, self).__init__()
 
-
 	# def header(self, user, loc):
  #        return ('''<!DOCTYPE html><html></html><body><h3>%s %s</h3>'''% (user, loc))
 
@@ -20,7 +19,7 @@ class HTMLwriter(object):
 				<h >museyroom album / %s </h> <br>
 				''' % loc
 
-	def genHeader(self, user, loc = '', username= ''):
+	def userHomeHeader(self, user, loc = '', username= ''):
 		return '''
 				<div class="container">
 
@@ -34,17 +33,44 @@ class HTMLwriter(object):
 			        </div>
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
+			            <li class="active"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li><a class="navbar-brand" href="#">%s / %s </a>
+			          </ul>
+			          <ul class="nav navbar-nav navbar-right">
+			          	<li class="dropdown">
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">Change Password</a></li>
+			                <li><a href="#">Change Email</a></li>
+			                <li class="divider"></li>
+			                <li><a href="/logout">Logout</a></li>
+			              </ul>
+			            </li>
+			          </ul>
+			        </div><!--/.nav-collapse -->
+			      </div><!--/.navbar navbar-default -->
+				''' % (username, user, loc, username)
+
+	def proToolsProjectHeader(self, user, loc = '', username= ''):
+		# NAVBAR for ProTools Folders
+		return '''
+				<div class="container">
+			      <div class="navbar navbar-default">
+			        <div class="navbar-header">
+			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			          </button>
+			        </div>
+			        <div class="navbar-collapse collapse">
+			          <ul class="nav navbar-nav">
 			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
 			            <li class="dropdown">
-			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" >Dropdown <b class="caret"></b></a>
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
 			              <ul class="dropdown-menu">
-			                <li><a href="#">Action</a></li>
-			                <li><a href="#">Another action</a></li>
-			                <li><a href="#">Something else here</a></li>
-			                <li class="divider"></li>
-			                <li class="dropdown-header">Nav header</li>
-			                <li><a href="#">Separated link</a></li>
-			                <li><a href="#">One more separated link</a></li>
+			                <li><a href="#">Song</a></li>
+			                <li><a href="#">Audio</a></li>
 			              </ul>
 			            </li>
 			            <li><a class="navbar-brand" href="#">%s / %s </a>
@@ -64,13 +90,100 @@ class HTMLwriter(object):
 			      </div><!--/.navbar navbar-default -->
 				''' % (username, user, loc, username)
 
-	accountListHeader = ''' 
-							<div class="panel panel-info" style="width:300px">
-							<div class="panel-heading">Pro Tools Projects</div>
-							<div class="list-group">
+	def proToolsSessionHeader(self, user, loc = '', username= ''):
+		# NAVBAR for ProTools Folders
+		return '''
+				<div class="container">
+			      <div class="navbar navbar-default">
+			        <div class="navbar-header">
+			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			          </button>
+			        </div>
+			        <div class="navbar-collapse collapse">
+			          <ul class="nav navbar-nav">
+			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li class="dropdown">
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">PTF</a></li>
+			                <li><a href="#">PTX</a></li>
+			                <li><a href="#">Audio</a></li>
+			              </ul>
+			            </li>
+			            <li><a class="navbar-brand" href="#">%s / %s </a>
+			          </ul>
+			          <ul class="nav navbar-nav navbar-right">
+			          	<li class="dropdown">
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">Change Password</a></li>
+			                <li><a href="#">Change Email</a></li>
+			                <li class="divider"></li>
+			                <li><a href="/logout">Logout</a></li>
+			              </ul>
+			            </li>
+			          </ul>
+			        </div><!--/.nav-collapse -->
+			      </div><!--/.navbar navbar-default -->
+				''' % (username, user, loc, username)
+
+	accountListHeader = ''' <div class="row">
+  									<div class="col-md-7">
+									<div class="panel panel-info">
+										<div id="newProjectForm" class="modal fade in" role="dialog">
+											<div class="modal-dialog">
+												<div class="modal-content">
+												<div class="modal-header">
+													<a class="close" data-dismiss="modal">x</a>
+													<h3>New Project</h3>
+												</div>
+												<div class="modal-dialog">
+													<form action="/newProject" method="post">
+											            <input type="text" name="projectName" placeholder="Project Name" style="width:80%"/> <br>
+											            <input type="text" name="collaborators" placeholder="Add Collaborator" style="width:80%"/> <br>
+											        </form>	        
+												</div>
+												<div class="modal-footer">
+													<a href="#" class="btn btn-success">Create</a>
+													<a href="#" class="btn" data-dismiss="modal">Close</a>
+												</div>
+												</div><!--./modal-content-->
+											</div><!--./modal-dialog-->
+										</div>
+										<div class="panel-heading">Pro Tools Projects
+										  <span class="pull-right">
+												<a data-toggle="modal" href="#newProjectForm" class="btn btn-primary btn-xs" title="New Project">
+												<i class="glyphicon glyphicon-plus"></i></a>
+													    
+													    
+										  </span>
+
+										</div><!--./panel-heading-->
+									<div class="list-group">
 							
 						'''
 
+
+	accountListFooter = '''
+							</div><!--/.list-group -->
+							</div><!--/.panel-info -->
+							</div><!--/.col-md-7 -->
+						'''
+
+	notesListHeader = '''<div class="col-md-5">
+								<div class="panel panel-warning">
+									<div class="panel-heading">Notifications</div>
+					'''
+
+	notesListFooter = '''
+							</div><!--/.list-group -->
+							</div><!--/.panel-info -->
+							</div><!--/.col-md-5 -->
+							
+						'''
 	def proToolsLinks(self, account, loc):
 		return (' <small><a title="replace this directory with a zip file" href="/replace/' + account + '/' + loc + '" style="text-decoration: none;">replace</a>' + ' | '
 					+ '<a title="compress this directory into a .zip file" href="/mkzip_prompt/' + account + '/' + loc + '" style="text-decoration: none;">make zip</a>' + ' | '
@@ -201,13 +314,21 @@ class HTMLwriter(object):
 					<link href="/static/navbar.css" rel="stylesheet">
 					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
 					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+					<link href="select2.css" rel="stylesheet"/>
+				    
 				</head>
 			   <body>
 			   	'''
 
 	foot = '''		</div>  <!--/.container -->
 					<script src="http://code.jquery.com/jquery-1.9.1.min.js" type="text/javascript"></script>
-					<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>						
+					<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+					<script src="select2.js"></script>
+				    <script>
+				        $(document).ready(function() { $("#collabForm").select2({
+				        	placeholder: "Add Collaborators",
+				        	data:["mc", "ben", "david"]}); });
+				    </script>						
   				</body>
 			</html>
 			'''
@@ -241,11 +362,9 @@ class HTMLwriter(object):
 				<a href= /logout > logout </a> </small>
 				''' % (user, account, account)
 	
-	def homeFooter(self, user):
-		return '''<small> <a href= pass/%s > change password </a>
-				&nbsp;|&nbsp;
-				<a href= /logout > logout </a> </small>
-				''' % user
+	homeFooter ='''
+					</div><!--/.row -->
+				'''
 
 	about = head + loginForm + '''</div> <div class="center_links"><html> <small> <p> This is a private server hosted by matthew coppola. <br>
                 I can be reached at mcoppola832@gmail.com  &nbsp;|&nbsp; <a href= /login > back </a>  </p> </small></div></html> '''

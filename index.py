@@ -64,7 +64,7 @@ def about():
 # STATIC FILE RETURN ----------------------------------------/
 @route('/static/<filename>')
 def server_static(filename):
-    return static_file(filename, root='./')
+    return static_file(filename, root='static/')
 
 @route('/file/<file>')
 def returnFile(file):
@@ -96,11 +96,19 @@ def userHome(user):
 	checkLogin(user)
 	global groups
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.head + html.genHeader(user, '', user) + html.accountListHeader)
+	fl.write(html.head + html.userHomeHeader(user, '', user) + html.accountListHeader)
+	# write all groups that user belongs to
 	for g in groups[user]:
 		fl.write('<a href="/account/' + g + '" class="list-group-item">' + g + '</a> \n')
-	fl.write('</div></div>')
-	fl.write(html.homeFooter(user) + html.foot)
+	fl.write(html.accountListFooter)
+	fl.write(html.notesListHeader)
+	# write all notifications
+	for g in groups[user]:
+		if (g != user):
+			if ':' in open('site/' + g + '/log.txt', 'r').read():
+				log = open('site/' + g + '/log.txt', 'r')
+				fl.write('<div class="alert alert-warningalert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><a class="alert-link" href="/account/' + g + '" class="list-group-item">' + g + '</a><br>' + log.read() + '</div> \n')
+	fl.write(html.notesListFooter + html.homeFooter + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -119,7 +127,7 @@ def mcHome():
 def printGenDirectory(account, loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.head + html.genHeader(account, formatLoc(loc), user))
+	fl.write(html.head + html.proToolsProjectHeader(account, formatLoc(loc), user))
 	fl.write(html.genFolderLinks(account, loc))
 	if (loc != ''):
 		loca = loc + '/'
@@ -148,7 +156,7 @@ def printGenDirectory(account, loc):
 def printProToolsDirectory(account, loc):
 	global user
 	fl = open('site/html_gen.txt', 'w')
-	fl.write(html.head + html.genHeader(account, formatLoc(loc), user))
+	fl.write(html.head + html.proToolsSessionHeader(account, formatLoc(loc), user))
 	if (loc != ''):
 		fl.write(html.proToolsLinks(account, loc))
 		loca = loc + '/'
@@ -412,7 +420,7 @@ def accountGeneric(account):
 	checkLogin(user)
 	settings = open('site/' + account + '/settings.txt', 'r').read().splitlines()
 	if (settings[0] == 'p'):
-		return printProToolsDirectory(account, '')
+		return printGenDirectory(account, '')
 	elif (settings[0] == 'a'):
 		return printGenDirectory(account, '')
 
