@@ -127,11 +127,12 @@ def printGenDirectory(account, loc):
 		loca = loc + '/'
 	else:
 		loca = loc
+	# write all songs
+	fl.write(html.songListHeader)
 	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
 		count = 0
-		fl.write(html.songListHeader)
 		for f in dirs:
-			fl.write('<a href="/account/' + account + '/' + loca + f + '"><li class="list-group-item">' + f + '</li></a> \n')
+			fl.write('<a href="/account/' + account + '/' + loca + f + '" class="list-group-item">' + f + '</a> \n')
 		# for f in files:
 		# 	count = count + 1
 		# 	size = os.path.getsize('data/' + account + '/' + loc + '/' + f)
@@ -155,7 +156,9 @@ def printGenDirectory(account, loc):
 	with open('site/' + account + '/links.txt', 'r') as f:
 		links = f.readlines()
 	for l in links:
-		fl.write('<li class="list-group-item link-item">' + l + '</li>')
+		# url,title
+		link = l.split(',')
+		fl.write('<a target="_blank" href="' + link[0] + '" class="list-group-item ">' + link[1] + '</a>')
 	fl.write(html.linksListFooter + '</div><!-- /row -->')
 	fl.write(html.foot)
 	fl.close()
@@ -486,8 +489,11 @@ def doAddLink(account):
 	url = request.forms.get('url')
 	if url.startswith('https://'):
 		url = url[7:]
-	with open("site/%s/links.txt" % account, "a") as linksFile:
-		linksFile.write('<br><a href="https://%s" target="_blank">%s</a>' %(url, title))
+	with open("site/%s/links.txt" % account, "a+b") as linksFile:
+		if (len(linksFile.read()) > 0):
+			linksFile.write('https://%s,%s' %(url, title))
+		else:
+			linksFile.write('https://%s,%s' %(url, title))
 	redirect('/account/%s' % account)
 
 @route('/noaccess')

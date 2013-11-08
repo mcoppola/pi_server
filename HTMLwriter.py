@@ -216,7 +216,7 @@ class HTMLwriter(object):
 							
 						'''
 	def linksListHeader(self, account):
-		return '''<div class="col-md-5">
+		return '''<div class="col-md-5 pull-right">
 					<div class="panel panel-success">
 					<div id="newLinkForm" class="modal fade in" role="dialog">
 								<div class="modal-dialog">
@@ -229,10 +229,11 @@ class HTMLwriter(object):
 										<form action="/addlink/%s" method="post">
 								            <input type="text" name="title" placeholder="Title"/> 
 								            <input type="text" name="url" placeholder="URL"/>
-								        </form>       
+								               
 									</div>
 									<div class="modal-footer">
-										<a href="#" class="btn btn-success">Add Link</a>
+										<a href="/addlink/%s" class="btn btn-success"><input type="submit" value="Add Link"/></a>
+										</form>
 										<a href="#" class="btn" data-dismiss="modal">Close</a>
 									</div>
 									</div><!--./modal-content-->
@@ -245,7 +246,7 @@ class HTMLwriter(object):
 							  </span>
 						</div>
 							<div class="list-group">
-					'''% (account)
+					'''% (account, account)
 
 	linksListFooter = '''
 							</div><!--/.list-group -->
@@ -448,7 +449,7 @@ class HTMLwriter(object):
 	
 	loginForm = '''<html>
 				<div class="center_login">
-				<img src="file/churdump.jpg" width="150" height="240">
+				<img src="/static/churdump.jpg" width="150" height="240">
 	            <form action="/login" method="post">
 	            <input type="text" name="login" placeholder="username" style="width: 100%"/> <br>
 	            <input type="password" name="password" placeholder="password" style="width: 100%"/> <br>
