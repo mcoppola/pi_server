@@ -23,3 +23,29 @@ div.accountHeader{
   display: block;
   text-align: left;
 }
+a.folder{
+  margin: 6px;
+}
+
+
+li.home_btn{
+  right:  15px;
+  border: 1px solid #D8D8D8;
+  border-width: 1px;
+  border-radius: 2px;
+
+}
+li.user_btn{
+  border: 1px solid #D8D8D8;
+  border-width: 1px;
+  border-radius: 2px;
+
+}
+.icon-pt {
+  background-image: url("/static/pt.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+  height: 24px;
+  width: 24px;
+}

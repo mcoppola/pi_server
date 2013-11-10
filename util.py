@@ -1,4 +1,5 @@
 import zipfile, os, shutil
+from collections import defaultdict
 
 def zipdir(name, path):
 	zipper(path, name)
@@ -17,6 +18,18 @@ def formatLoc(loc):
 		if l != '':
 			formated += l + ' / '
 	return formated
+
+def noteCountForSongs(user, account):
+    if (user == 'null'):
+        user = 'mc'
+    notes = defaultdict(lambda: 0)
+    settings = open('site/' + user + '/settings.txt', 'r').read().splitlines()
+    for l in settings:
+        if l.startswith(account):
+            v = l.split(',')
+            for value in v[1:]:
+                notes[value] += 1
+    return notes
 
 def unzip(zipFilePath, destDir):
     zfile = zipfile.ZipFile(zipFilePath)

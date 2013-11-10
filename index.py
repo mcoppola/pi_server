@@ -1,10 +1,10 @@
 # Matthew Coppola
 # server code for raspberry pi 0.1
-# implementation for museyroom album pro tools session repository
+# implementation for pro tools session repository
 import os, time, shutil, zipfile, datetime, subprocess, threading
 from bottle import route, run, request, redirect, FlupFCGIServer, static_file
 from HTMLwriter import HTMLwriter
-from util import zipdir, formatLoc, unzip, unzipReplace, sendEmail
+from util import zipdir, formatLoc, unzip, unzipReplace, sendEmail, noteCountForSongs
 
 
 class ZipDir ( threading.Thread ):
@@ -99,7 +99,16 @@ def userHome(user):
 	fl.write(html.head + html.userHomeHeader(user, '', user) + html.accountListHeader)
 	# write all groups that user belongs to
 	for g in groups[user]:
-		fl.write('<a href="/account/' + g + '" class="list-group-item">' + g + '</a> \n')
+		done = False
+		settings = open('site/' + user + '/settings.txt', 'r').read().splitlines()
+		for l in settings:
+			if l.startswith(g):
+				updates = int(len(l.split(',')) - 1)
+				fl.write('<a href="/account/' + g + '" class="list-group-item"><b>' + g + '<span class="badge pull-right">%d</span></b></a> \n' % updates)
+				done = True
+				break
+		if not done:
+			fl.write('<a href="/account/' + g + '" class="list-group-item"><b>' + g + '</b></a> \n')
 	fl.write(html.accountListFooter)
 	fl.write(html.notesListHeader)
 	# write all notifications
@@ -128,11 +137,17 @@ def printGenDirectory(account, loc):
 	else:
 		loca = loc
 	# write all songs
-	fl.write(html.songListHeader)
+	fl.write(html.songListHeader(account))
+	# get notification count
+	notes = noteCountForSongs(user, account)
 	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
 		count = 0
 		for f in dirs:
-			fl.write('<a href="/account/' + account + '/' + loca + f + '" class="list-group-item">' + f + '</a> \n')
+			if notes[f]:
+				updates = notes[f]
+				fl.write('<a href="/account/' + account + '/' + loca + f + '" class="list-group-item"><font color="#3399CC"><b>' + f + '<span class="badge pull-right">%d</span></b></font></a> \n' % updates)
+			else:
+				fl.write('<a href="/account/' + account + '/' + loca + f + '" class="list-group-item"><font color="#3399CC"><b>' + f + '</b></font></a> \n')
 		# for f in files:
 		# 	count = count + 1
 		# 	size = os.path.getsize('data/' + account + '/' + loc + '/' + f)
@@ -155,10 +170,12 @@ def printGenDirectory(account, loc):
 	# write all links
 	with open('site/' + account + '/links.txt', 'r') as f:
 		links = f.readlines()
+	index = 0;
 	for l in links:
 		# url,title
 		link = l.split(',')
-		fl.write('<a target="_blank" href="' + link[0] + '" class="list-group-item ">' + link[1] + '</a>')
+		fl.write(html.linkItem(user, account, link, index))
+		index+=1
 	fl.write(html.linksListFooter + '</div><!-- /row -->')
 	fl.write(html.foot)
 	fl.close()
@@ -170,15 +187,14 @@ def printProToolsDirectory(account, loc):
 	fl = open('site/html_gen.txt', 'w')
 	fl.write(html.head + html.proToolsSessionHeader(account, formatLoc(loc), user))
 	if (loc != ''):
-		fl.write(html.proToolsLinks(account, loc))
 		loca = loc + '/'
 	else:
 		loca = loc
 	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
 		count = 0
-		fl.write('<ul style="list-style-type:circle">')
+		fl.write('<ul>')
 		for f in dirs:
-			fl.write('<a href="/account/' + account + '/' + loca + f + '"><li>' + f + '</li></a> \n')
+			fl.write(html.folderItem(account, loca, f))
 		fl.write('</ul> <ol>')
 		for f in files:
 			count = count + 1
@@ -186,26 +202,26 @@ def printProToolsDirectory(account, loc):
 			date = time.ctime(os.path.getmtime('data/' + account + '/' + loc + '/' + f))
 
 			if f.endswith('.ptx'):
-				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">' + '<font color="#66CCFF">'
+				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#66CCFF">'
 					+ f + '</a></font>' + ' | '
-					+ str(size) + ' bytes' +  ' | '
-					+ str(date) + '</li>' + '\n')
+					+ str(size/1024/1024) + ' MB' +  ' | '
+					+ str(date) + '<br>' + '\n')
 			elif f.endswith('.ptf'):
-				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">' + '<font color="#6699FF">'
+				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#6699FF">'
 					+ f + '</a></font>' + ' | '
-					+ str(size) + ' bytes' +  ' | '
-					+ str(date) + '</li>' + '\n')
+					+ str(size/1024/1024) + ' MB' +  ' | '
+					+ str(date) + '<br>' + '\n')
 			elif f.endswith('.zip'):
-				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">' + '<font color="#00CC99">'
+				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#00CC99">'
 					+ f + '</a></font>' + ' | '
-					+ str(size) + ' bytes' +  ' | '
-					+ str(date) + '</li>' + '\n')
+					+ str(size/1024/1024) + ' MB' +  ' | '
+					+ str(date) + '<br>' + '\n')
 			else:
-				fl.write('<li>' + '<a href="/'+ account + '/down/' + loca + str(count) + '">'
-					+ f + '</a>' + ' | '
-					+ str(size) + ' bytes' +  ' | '
-					+ str(date) + '</li>' + '\n')
-			fl.write('</ol>')
+				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#999">'
+					+ f + '</a></font>' + ' | '
+					+ str(size/1024/1024) + ' MB' +  ' | '
+					+ str(date) + '<br>' + '\n')
+		fl.write('</ol>')
 		break
 	
 	
@@ -214,7 +230,7 @@ def printProToolsDirectory(account, loc):
 		links = open('site/' + account + '/links.txt').read()
 		fl.write(html.linksHeader(account) + str(links) + html.logHeader + str(log) + html.foot)
 	else:
-		fl.write(html.foot)
+		fl.write('</div>' + html.foot)
 	fl.close()
 	txt = open('site/html_gen.txt', 'r')
 	return txt
@@ -315,11 +331,6 @@ def doAddPTX(account, loc):
 			redirect('/account/' + account + '/' + loc)
 	return 'no file was uploaded'
 
-@route('/addSong/<account>')
-def addSong(account):
-	global user
-	checkLogin(user)
-	return html.uploadNewSongZip(account)
 
 @route('/addSong/<account>', method='POST')
 def doAddSong(account):
@@ -327,11 +338,11 @@ def doAddSong(account):
 	checkLogin(user)
 	checkAccess()
 	upload = request.files.get('upload')
+	name = request.files.get('')
 	if upload.filename:
 		fn = os.path.basename(upload.filename)
 		if not fn.endswith('.zip'):
 			return 'please choose a .zip file'
-
 		open('data/' + account + '/' + fn, 'wb').write(upload.file.read())
 		(dirName, fileName) = fn.split('.')
 		if not os.path.exists('data/' + account + '/' + dirName):
@@ -475,11 +486,11 @@ def changePassword(user):
 	return 'not available'
 
 # ADD LINK ------------------------------------------------/
-@route('/addlink/<account>', method='GET')
-def addLink(account):
-	global user
-	checkLogin(user)
-	return html.addLinkForm(account)
+# @route('/addlink/<account>', method='GET')
+# def addLink(account):
+# 	global user
+# 	checkLogin(user)
+# 	return html.addLinkForm(account)
 
 @route('/addlink/<account>', method='POST')
 def doAddLink(account):
@@ -489,20 +500,43 @@ def doAddLink(account):
 	url = request.forms.get('url')
 	if url.startswith('https://'):
 		url = url[7:]
-	with open("site/%s/links.txt" % account, "a+b") as linksFile:
-		if (len(linksFile.read()) > 0):
-			linksFile.write('https://%s,%s' %(url, title))
-		else:
-			linksFile.write('https://%s,%s' %(url, title))
+	file = open("site/%s/links.txt" % account, "r+")
+	links = file.read().splitlines()
+	links.append('https://%s,%s' %(url, title))
+	file.seek(0)
+	for l in links:
+		file.write(l+'\n')
+	file.truncate
+	file.close
 	redirect('/account/%s' % account)
+
+@route('/removeLink/<account>/<i:int>')
+def removeLink(account, i):
+	global user
+	checkLogin(user)
+	file = open("site/%s/links.txt" % account, "r+")
+	links = file.read().splitlines()
+	file.seek(0)
+	file.truncate()
+	print links
+	links.pop(i)
+	print links
+	for l in links:
+		file.write(l+'\n')
+	
+	file.close
+	redirect('/account/%s' % account)
+
 
 @route('/noaccess')
 def noAccess():
 	return html.noAccess
 
 def checkLogin(user = 'null'):
-	global loggedIn, groups
+	global loggedIn, groups, D
 	verified = False
+	if D: 
+		return
 	if (loggedIn == user):
 		for g in groups[loggedIn]:
 			if (g == loggedIn):
@@ -523,9 +557,9 @@ def logger(action, loc, account, message=''):
 	open('site/' + account + '/log.txt', 'wb').write(log)
 
 #locActions (action: description)
-logActions = {'addPTX': '+ptx', 'addPTF': '+ptf', addSong: '+song'}
+logActions = {'addPTX': '+ptx', 'addPTF': '+ptf', 'addSong': '+song'}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['ben', 'museyroom'], 'mc':['mc','wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys'], 'caddy':['caddy']}
+groups = {'null':[], 'ben':['museyroom'], 'mc':['wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'museyroom':['museyroom'], 'owen':['owen', 'drunken_bear', 'wellboys'], 'caddy':['caddy']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()
@@ -533,5 +567,6 @@ user = 'null'
 access = True
 password = ''
 loggedIn = ''
+D = True
 #on pi server=FlupFCGIServer
 run(host='127.0.0.1', port=8080)

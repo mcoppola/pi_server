@@ -23,7 +23,7 @@ class HTMLwriter(object):
 		return '''
 				<div class="container">
 
-			      <div class="navbar navbar-default">
+			      <div class="navbar navbar-info">
 			        <div class="navbar-header">
 			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 			            <span class="icon-bar"></span>
@@ -33,10 +33,10 @@ class HTMLwriter(object):
 			        </div>
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
-			            <li class="active"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			           <li class="active home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
-			          	<li class="dropdown">
+			          	<li class="dropdown user_btn">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
 			              <ul class="dropdown-menu">
 			                <li><a href="#">Change Password</a></li>
@@ -54,7 +54,7 @@ class HTMLwriter(object):
 		# NAVBAR for ProTools Folders
 		return '''
 				<div class="container">
-			      <div class="navbar navbar-default">
+			      <div class="navbar navbar-info">
 			        <div class="navbar-header">
 			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 			            <span class="icon-bar"></span>
@@ -64,7 +64,7 @@ class HTMLwriter(object):
 			        </div>
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
-			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li class="home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
 			            <li><a class="navbar-brand" href="#">%s / %s </a>
 			            <li class="dropdown">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
@@ -76,7 +76,7 @@ class HTMLwriter(object):
 			            </li>
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
-			          	<li class="dropdown">
+			          	<li class="dropdown user_btn">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
 			              <ul class="dropdown-menu">
 			                <li><a href="#">Change Password</a></li>
@@ -92,9 +92,14 @@ class HTMLwriter(object):
 
 	def proToolsSessionHeader(self, group, loc = '', username= ''):
 		# NAVBAR for ProTools Folders
+		locFull = loc
+		if (len(loc.split('/')) > 1):
+			locSplit = loc.split('/')
+			loc = locSplit[0]
+
 		return '''
 				<div class="container">
-			      <div class="navbar navbar-default">
+			      <div class="navbar navbar-info">
 			        <div class="navbar-header">
 			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 			            <span class="icon-bar"></span>
@@ -104,9 +109,9 @@ class HTMLwriter(object):
 			        </div>
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
-			            <li><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li class="home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
 			            <li><a class="navbar-brand" href="/account/%s">%s</a>
-			            <a class="navbar-brand" href="#" style="right:25px">/ %s </a></li>
+			            <a class="navbar-brand" href="/account/%s/%s" style="right:25px">/ %s </a></li>
 			            <li class="dropdown">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="right:25px"><i class="glyphicon glyphicon-plus"></i></b></a>
 			              <ul class="dropdown-menu">
@@ -132,7 +137,7 @@ class HTMLwriter(object):
 			            </li>    
 			          </ul>
 			          <ul class="nav navbar-nav navbar-right">
-			          	<li class="dropdown">
+			          	<li class="dropdown user_btn">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
 			              <ul class="dropdown-menu">
 			                <li><a href="#">Change Password</a></li>
@@ -144,15 +149,16 @@ class HTMLwriter(object):
 			          </ul>
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
-				''' % (username, group, group, loc, username)
+			      <div style="position:relative; left:32px">
+				''' % (username, group, group, group, loc, locFull, username)
 	# Log array = [time, song-commited-to, user-who-commited, action, message]
 	def notification(self, user, group, log):
-		return '''<div class="alert alert-dismissable">
+		return '''<div class="notification alert alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
 					&times;
 					</button>
-					<p style="font-size:meduim"><a class="alert-link" href="/account/%s" class="list-group-item">%s</a>,     <!--/.group -->
-					<a class="alert-link" href="/account/%s/%s" class="list-group-item">%s</a>,  <!--/.song -->
+					<p style="font-size:meduim"><a class="alert-link" href="/account/%s" class="list-group-item"><font color="#333">%s</font></a>,     <!--/.group -->
+					<a class="alert-link" href="/account/%s/%s" class="list-group-item"><font color="#3399CC">%s</font></a>,  <!--/.song -->
 					<span style="color:#999; font-size:small"><medium> %s</medium></span>
 					</p>    <!--/.action -->
 					<p style="font-size:small">
@@ -160,8 +166,23 @@ class HTMLwriter(object):
 					</div>
 				''' % (group, group, group, log[1], log[1], log[3], log[2], log[2], log[4])
 
+	def linkItem(self, user, group, link, index):
+		return '''
+				<a target="_blank" href="%s" class="list-group-item">%s
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="removeLink('%s', %d);">
+					&times;
+					</button>
+				</a>
+				''' % (link[0], link[1], group, index)
+
+	def folderItem(self, account, loc, dir_name):
+		return '''
+				<a class="folder" href="/account/%s/%s%s" style="">
+				<i class="glyphicon glyphicon-folder-close"></i> %s</a><br>
+				''' % (account, loc, dir_name, dir_name)
+
 	accountListHeader = ''' <div class="row">
-  									<div class="col-md-7">
+  									<div class="col-md-7"> 
 									<div class="panel panel-info">
 										<div id="newProjectForm" class="modal fade in" role="dialog">
 											<div class="modal-dialog">
@@ -183,12 +204,10 @@ class HTMLwriter(object):
 												</div><!--./modal-content-->
 											</div><!--./modal-dialog-->
 										</div>
-										<div class="panel-heading">Pro Tools Projects
+										<div class="panel-heading"></i>Pro Tools Projects
 										  <span class="pull-right">
 												<a data-toggle="modal" href="#newProjectForm" class="btn btn-default btn-xs" title="New Project">
 												<i class="glyphicon glyphicon-plus"></i></a>
-													    
-													    
 										  </span>
 
 										</div><!--./panel-heading-->
@@ -232,9 +251,9 @@ class HTMLwriter(object):
 								               
 									</div>
 									<div class="modal-footer">
-										<a href="/addlink/%s" class="btn btn-success"><input type="submit" value="Add Link"/></a>
-										</form>
+										<input class="btn btn-success" type="submit" value="Add Link"/></form>
 										<a href="#" class="btn" data-dismiss="modal">Close</a>
+										
 									</div>
 									</div><!--./modal-content-->
 								</div><!--./modal-dialog-->
@@ -246,7 +265,7 @@ class HTMLwriter(object):
 							  </span>
 						</div>
 							<div class="list-group">
-					'''% (account, account)
+					'''% (account)
 
 	linksListFooter = '''
 							</div><!--/.list-group -->
@@ -329,6 +348,7 @@ class HTMLwriter(object):
 				<input type="file" name="upload" />
 				<input type="submit" value="Upload" /> </small>
 				</form>
+
 				''' %(account, loc))
 
 	def uploadGen(self, account, loc):
@@ -384,26 +404,26 @@ class HTMLwriter(object):
 					<link href="/static/navbar.css" rel="stylesheet">
 					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
 					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-					<link href="select2.css" rel="stylesheet"/>
 				    
 				</head>
 			   <body>
 			   	'''
 
 	foot = '''		</div>  <!--/.container -->
-					<script src="http://code.jquery.com/jquery-1.9.1.min.js" type="text/javascript"></script>
-					<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
-					<script src="select2.js"></script>
+					<script src="/static/jquery-1.10.2.min.js" type="text/javascript"></script>
+					<script type="text/javascript" src="/static/bootstrap.min.js"></script>
 				    <script>
-				        $(document).ready(function() { $("#collabForm").select2({
-				        	placeholder: "Add Collaborators",
-				        	data:["mc", "ben", "david"]}); });
-				    </script>						
+						function removeLink(account, i)
+						{
+						window.location.replace("/removeLink/" + account + "/" + i);
+						}
+					</script>				
   				</body>
 			</html>
 			'''
 
-	songListHeader = '''
+	def songListHeader(self, account):
+		return '''
 					<div class="row">
   						<div class="col-md-7">
 							<div class="panel panel-default">
@@ -414,14 +434,16 @@ class HTMLwriter(object):
 										<a class="close" data-dismiss="modal">x</a>
 										<h3>New Song</h3>
 									</div>
-									<div class="modal-dialog">
-										<form action="/addlink/%s" method="post">
-								            <input type="text" name="title" placeholder="Song Name"/> 
-								            <input type="file" name="zip" placeholder="Zip"/>
-								        </form>       
+									<div class="modal-body">
+										<p>Upload a Zip file of the entire Pro Tools Directory.  It will be extracted into this account.  
+										This will take a while depending on the size of the session. Please do not press "back" after the upload has begun. </p>
+										<br>
+										<form action="/addSong/%s" method="post" enctype="multipart/form-data"> 
+								            <input type="file" name="upload" value="Upload"/>
+								              
 									</div>
 									<div class="modal-footer">
-										<a href="#" class="btn btn-success">Add Song</a>
+										<input class="btn btn-success" type="submit" value="Add Song"/></form>
 										<a href="#" class="btn" data-dismiss="modal">Close</a>
 									</div>
 									</div><!--./modal-content-->
@@ -435,7 +457,8 @@ class HTMLwriter(object):
 							    </div>
 					  		
 					  			<ul class="list-group">
-					'''
+					''' % account
+
 	songListFooter = '''
 								</ul><!-- /list-group -->
 							</div><!-- /panel -->
