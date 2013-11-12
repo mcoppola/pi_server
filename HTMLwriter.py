@@ -34,9 +34,7 @@ class HTMLwriter(object):
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
 			           <li class="active home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
-			          </ul>
-			          <ul class="nav navbar-nav navbar-right">
-			          	<li class="dropdown user_btn">
+			           <li class="dropdown user_btn">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
 			              <ul class="dropdown-menu">
 			                <li><a href="#">Change Password</a></li>
@@ -50,7 +48,7 @@ class HTMLwriter(object):
 			      </div><!--/.navbar navbar-default -->
 				''' % (username, username)
 
-	def proToolsProjectHeader(self, user, loc = '', username= ''):
+	def proToolsProjectHeader(self, account, loc = '', username= ''):
 		# NAVBAR for ProTools Folders
 		return '''
 				<div class="container">
@@ -65,6 +63,15 @@ class HTMLwriter(object):
 			        <div class="navbar-collapse collapse">
 			          <ul class="nav navbar-nav">
 			            <li class="home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li class="dropdown user_btn">
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
+			              <ul class="dropdown-menu">
+			                <li><a href="#">Change Password</a></li>
+			                <li><a href="#">Change Email</a></li>
+			                <li class="divider"></li>
+			                <li><a href="/logout">Logout</a></li>
+			              </ul>
+			            </li>
 			            <li><a class="navbar-brand" href="#">%s / %s </a>
 			            <li class="dropdown">
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
@@ -75,29 +82,17 @@ class HTMLwriter(object):
 			              </ul>
 			            </li>
 			          </ul>
-			          <ul class="nav navbar-nav navbar-right">
-			          	<li class="dropdown user_btn">
-			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
-			              <ul class="dropdown-menu">
-			                <li><a href="#">Change Password</a></li>
-			                <li><a href="#">Change Email</a></li>
-			                <li class="divider"></li>
-			                <li><a href="/logout">Logout</a></li>
-			              </ul>
-			            </li>
-			          </ul>
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
-				''' % (username, user, loc, username)
+				''' % (username, username, account, loc)
 
 	def proToolsSessionHeader(self, group, loc = '', username= ''):
 		# NAVBAR for ProTools Folders
 		locFull = loc
-		if (len(loc.split('/')) > 1):
+		if (len(loc.split('/')) == 3):
 			locSplit = loc.split('/')
 			loc = locSplit[0]
-
-		return '''
+			return '''
 				<div class="container">
 			      <div class="navbar navbar-info">
 			        <div class="navbar-header">
@@ -111,13 +106,61 @@ class HTMLwriter(object):
 			          <ul class="nav navbar-nav">
 			            <li class="home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
 			            <li><a class="navbar-brand" href="/account/%s">%s</a>
-			            <a class="navbar-brand" href="/account/%s/%s" style="right:25px">/ %s </a></li>
+			            <a class="navbar-brand" href="/account/%s/%s" style="margin-left:-25px">/ %s</a>
+			            <a class="navbar-brand" href="/account/%s/%s/%s" style="margin-left:-25px">/ %s</a></li>  
+			          </ul>
+			        </div><!--/.nav-collapse -->
+			      </div><!--/.navbar navbar-default -->
+			      <div style="position:relative; left:0px">
+				''' % (username, group, group, group, loc, loc, group, loc, locSplit[1], locSplit[1])
+		elif (len(loc.split('/')) > 1):
+			locSplit = loc.split('/')
+			loc = locSplit[0]
+
+		return '''
+				<div class="container">
+			      <div class="navbar navbar-info">
+				      <div id="addPTXForm" class="modal fade in" role="dialog">
+									<div class="modal-dialog">
+										<div class="modal-content">
+										<div class="modal-header">
+											<a class="close" data-dismiss="modal">x</a>
+											<h3>Commit Session File</h3>
+										</div>
+										<div class="modal-body">
+											<p>Upload a PTX or PTF file to be commited.  This will become the current session file in this directory 
+											and other collaborators will be notified.  The previous PTX or PTF of the same name will be coppied into the "Session File Backups" folder.</p>
+											<br>
+											<form action="/addPTX/%s/%s" method="post" enctype="multipart/form-data">
+												<input type="text" name="message" placeholder="Commit Message"/><br> 
+									            <input type="file" name="upload" value="Upload"/>
+								              
+										</div>
+										<div class="modal-footer">
+											<input class="btn btn-success" type="submit" value="Commit"/></form>
+											<a href="#" class="btn" data-dismiss="modal">Close</a>
+										</div>
+										</div><!--./modal-content-->
+									</div><!--./modal-dialog-->
+								</div>
+				        <div class="navbar-header">
+			          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			            <span class="icon-bar"></span>
+			          </button>
+			        </div>
+			        <div class="navbar-collapse collapse">
+			          <ul class="nav navbar-nav">
+			            <li class="home_btn"><a href="/home/%s"><i class="glyphicon glyphicon-home"></i></a></li>
+			            <li><a class="navbar-brand" href="/account/%s">%s</a>
+			            <a class="navbar-brand" href="/account/%s/%s" style="margin-left:-25px">/ %s </a></li>
 			            <li class="dropdown">
-			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="right:25px"><i class="glyphicon glyphicon-plus"></i></b></a>
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
 			              <ul class="dropdown-menu">
 			              	<li role="presentation" class="dropdown-header">Commit</li>
-			                <li><a href="#">PTF</a></li>
-			                <li><a href="#">PTX</a></li>
+				                <li><a data-toggle="modal" href="#addPTXForm">PTX</a></li>
+				                <li><a data-toggle="modal" href="#addPTXForm">PTF</a></li>
 			                <li class="divider"></li>
 			                <li role="presentation" class="dropdown-header">Add</li>
 			                <li><a href="#">Audio File</a></li>
@@ -127,7 +170,7 @@ class HTMLwriter(object):
 			              </ul>
 			            </li>
 			            <li class="dropdown">
-			              <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="right:25px"><i class="glyphicon glyphicon-file"></i></b></a>
+			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-wrench"></i></b></a>
 			              <ul class="dropdown-menu">
 			                <li><a href="#">Make Zip</a></li>
 			                <li><a href="#">Replace Entire Session</a></li>
@@ -136,39 +179,43 @@ class HTMLwriter(object):
 			              </ul>
 			            </li>    
 			          </ul>
-			          <ul class="nav navbar-nav navbar-right">
-			          	<li class="dropdown user_btn">
-			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>  %s </a>
-			              <ul class="dropdown-menu">
-			                <li><a href="#">Change Password</a></li>
-			                <li><a href="#">Change Email</a></li>
-			                <li class="divider"></li>
-			                <li><a href="/logout">Logout</a></li>
-			              </ul>
-			            </li>
-			          </ul>
 			        </div><!--/.nav-collapse -->
 			      </div><!--/.navbar navbar-default -->
-			      <div style="position:relative; left:32px">
-				''' % (username, group, group, group, loc, locFull, username)
-	# Log array = [time, song-commited-to, user-who-commited, action, message]
-	def notification(self, user, group, log):
-		return '''<div class="notification alert alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+			      <div style="position:relative; left:16px">
+				''' % (group, loc, username, group, group, group, loc, locFull)
+	# Log array = [time, group, song-commited-to, user-who-commited, action, message]
+	def notification(self, user, log, time):
+		return '''	<div class="panel-body" style="padding:10px">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="removeNotification('%s');">
 					&times;
 					</button>
-					<p style="font-size:meduim"><a class="alert-link" href="/account/%s" class="list-group-item"><font color="#333">%s</font></a>,     <!--/.group -->
-					<a class="alert-link" href="/account/%s/%s" class="list-group-item"><font color="#3399CC">%s</font></a>,  <!--/.song -->
-					<span style="color:#999; font-size:small"><medium> %s</medium></span>
-					</p>    <!--/.action -->
+					<p style="font-size:meduim"><a class="alert-link" href="/account/%s"><font color="#3AA4FF">%s</font></a>,     <!--/.group -->
+					<a class="alert-link" href="/account/%s/%s"><font color="#1BA68C">%s</font></a> <!--/.song -->
+					</p>    <!--/.header -->
+					<p style="font-size:small; line-height:0px">
+					<span style="color:#999; font-size:small"><medium> %s, %s</medium></span>
+					</p>
 					<p style="font-size:small">
-					<a class="alert-link" href="/user/%s" class="list-group-item">%s</a>: %s</p><!--/.message -->
+					<a class="alert-link" href="/user/%s"><font color="#F2522E">%s</font></a>: %s</p><!--/.message -->
 					</div>
-				''' % (group, group, group, log[1], log[1], log[3], log[2], log[2], log[4])
+				''' % (log[0], log[1], log[1], log[1], log[2], log[2], log[4], time, log[3], log[3], log[5])
+
+	def notificationLatest(self, user, log, time):
+		return '''	<div class="panel-body" style="padding:10px">
+					<p style="font-size:meduim"><a class="alert-link" href="/account/%s"><font color="#3AA4FF">%s</font></a>,     <!--/.group -->
+					<a class="alert-link" href="/account/%s/%s"><font color="#1BA68C">%s</font></a> <!--/.song -->
+					</p>    <!--/.header -->
+					<p style="font-size:small; line-height:0px">
+					<span style="color:#999; font-size:small"><medium> %s, %s</medium></span>
+					</p>
+					<p style="font-size:small">
+					<a class="alert-link" href="/user/%s"><font color="#F2522E">%s</font></a>: %s</p><!--/.message -->
+					</div>
+				''' % (log[1], log[1], log[1], log[2], log[2], log[4], time, log[3], log[3], log[5])
 
 	def linkItem(self, user, group, link, index):
 		return '''
-				<a target="_blank" href="%s" class="list-group-item">%s
+				<a target="_blank" href="%s" class="list-group-item li_link"><b>%s</b>
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="removeLink('%s', %d);">
 					&times;
 					</button>
@@ -181,9 +228,30 @@ class HTMLwriter(object):
 				<i class="glyphicon glyphicon-folder-close"></i> %s</a><br>
 				''' % (account, loc, dir_name, dir_name)
 
+	# Log array = [time, group, song-commited-to, user-who-commited, action, message]
+	def sessionHistoryItem(self, user, log, time):
+		return '''	<div class="panel-body" style="padding:10px; margin-left: 18px">
+					<p style="font-size:meduim"><a class="alert-link" href="#"><font color="#3AA4FF">%s</font>, <!--/.date -->
+					<span style="color:#999; font-size:small"><medium> %s </medium></span>
+					</p>    <!--/.header -->
+					<p style="font-size:small;">
+					<a class="alert-link" href="/user/%s"><font color="#F2522E">%s</font></a>: %s</p><!--/.message -->
+					</div>
+				''' % (time, log[4], log[3], log[3], log[5])
+
+	def sessionHistoryItemBehind(self, user, log, time):
+		return '''	<div class="panel-body" style="padding:10px">
+					<p style="font-size:meduim;"><i style="color:#F2522E" class="glyphicon glyphicon-flag"></i>&nbsp;<a class="alert-link" href="#"><font color="#3AA4FF">%s</font>, <!--/.date -->
+					<span style="color:#999; font-size:small"><medium> %s </medium></span>
+					</p>    <!--/.header -->
+					<p style="font-size:small; margin-left: 18px">
+					<a class="alert-link" href="/user/%s"><font color="#F2522E">%s</font></a>: %s</p><!--/.message -->
+					</div>
+				''' % (time, log[4], log[3], log[3], log[5])
+
 	accountListHeader = ''' <div class="row">
-  									<div class="col-md-7"> 
-									<div class="panel panel-info">
+  									<div class="col-md-6"> 
+									<div class="panel panel-primary">
 										<div id="newProjectForm" class="modal fade in" role="dialog">
 											<div class="modal-dialog">
 												<div class="modal-content">
@@ -191,23 +259,20 @@ class HTMLwriter(object):
 													<a class="close" data-dismiss="modal">x</a>
 													<h3>New Project</h3>
 												</div>
-												<div class="modal-dialog">
-													<form action="/newProject" method="post">
-											            <input type="text" name="projectName" placeholder="Project Name" style="width:80%"/> <br>
-											            <input type="text" name="collaborators" placeholder="Add Collaborator" style="width:80%"/> <br>
-											        </form>	        
+												<div class="modal-body">
+												<p>Feature not available.  Contact matt to add a new project.</p>
+													      
 												</div>
 												<div class="modal-footer">
-													<a href="#" class="btn btn-success">Create</a>
 													<a href="#" class="btn" data-dismiss="modal">Close</a>
 												</div>
 												</div><!--./modal-content-->
 											</div><!--./modal-dialog-->
 										</div>
-										<div class="panel-heading"></i>Pro Tools Projects
+										<div class="panel-heading">Pro Tools Projects
 										  <span class="pull-right">
 												<a data-toggle="modal" href="#newProjectForm" class="btn btn-default btn-xs" title="New Project">
-												<i class="glyphicon glyphicon-plus"></i></a>
+												<font color="B8B8B8"><i class="glyphicon glyphicon-plus"></i></font></a>
 										  </span>
 
 										</div><!--./panel-heading-->
@@ -219,23 +284,39 @@ class HTMLwriter(object):
 	accountListFooter = '''
 							</div><!--/.list-group -->
 							</div><!--/.panel-info -->
-							</div><!--/.col-md-7 -->
+							</div><!--/.col-md-5 -->
 						'''
 
-	notesListHeader = '''<div class="col-md-5">
+	notesListHeader = '''<div class="col-md-6">
 								<div class="panel panel-warning">
 									<div class="panel-heading">Notifications</div>
-										<div class="list-group">
+											<div class="list-group">
+
 					'''
 
 	notesListFooter = '''
 							</div><!--/.list-group -->
 							</div><!--/.panel -->
-							</div><!--/.col-md-5 -->
+							</div><!--/.col-md-6 -->
 							
 						'''
+
+	sessionHistoryHeader = '''<br><br>
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">Session History</div>
+											<div class="list-group">
+
+							'''
+
+	sessionHistoryFooter = '''
+						</div><!--/.list-group -->
+						</div><!--/.panel -->
+						</div><!--/.col-md-12 -->
+						
+					'''
 	def linksListHeader(self, account):
-		return '''<div class="col-md-5 pull-right">
+		return '''<div class="col-md-6 pull-right">
 					<div class="panel panel-success">
 					<div id="newLinkForm" class="modal fade in" role="dialog">
 								<div class="modal-dialog">
@@ -260,8 +341,8 @@ class HTMLwriter(object):
 							</div>
 						<div class="panel-heading">Links
 							<span class="pull-right">
-									<a data-toggle="modal" href="#newLinkForm" class="btn btn-success btn-xs" title="New Link">
-									<i class="glyphicon glyphicon-plus"></i></a>	    
+									<a data-toggle="modal" href="#newLinkForm" class="btn btn-default btn-xs" title="New Link">
+									<font color="B8B8B8"><i class="glyphicon glyphicon-plus"></i></font></a>	    
 							  </span>
 						</div>
 							<div class="list-group">
@@ -270,7 +351,7 @@ class HTMLwriter(object):
 	linksListFooter = '''
 							</div><!--/.list-group -->
 							</div><!--/.panel -->
-							</div><!--/.col-md-5 -->
+							</div><!--/.col-md-6 -->
 							
 						'''
 	def proToolsLinks(self, account, loc):
@@ -400,11 +481,10 @@ class HTMLwriter(object):
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			  <meta charset = "utf-8">
 					<title>mc</title>
-					<link href="/static/style.css" rel="stylesheet">
 					<link href="/static/navbar.css" rel="stylesheet">
-					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+					<link href="/static/bootstrap.css" rel="stylesheet">
 					<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-				    
+				    <link href="/static/style.css" rel="stylesheet">
 				</head>
 			   <body>
 			   	'''
@@ -417,7 +497,11 @@ class HTMLwriter(object):
 						{
 						window.location.replace("/removeLink/" + account + "/" + i);
 						}
-					</script>				
+						function removeNotification(date)
+						{
+						window.location.replace("/removeNotification/" + date + "/" + document.URL);
+						}
+					</script>					
   				</body>
 			</html>
 			'''
@@ -425,7 +509,7 @@ class HTMLwriter(object):
 	def songListHeader(self, account):
 		return '''
 					<div class="row">
-  						<div class="col-md-7">
+  						<div class="col-md-6">
 							<div class="panel panel-default">
 							<div id="newSongForm" class="modal fade in" role="dialog">
 								<div class="modal-dialog">
@@ -452,7 +536,7 @@ class HTMLwriter(object):
 					  			<div class="panel-heading">Songs
 					  			<span class="pull-right">
 									<a data-toggle="modal" href="#newSongForm" class="btn btn-default btn-xs" title="New Song">
-									<i class="glyphicon glyphicon-plus"></i></a>	    
+									<font color="B8B8B8"><i class="glyphicon glyphicon-plus"></i></font></a>	    
 							    </span>
 							    </div>
 					  		
@@ -462,7 +546,8 @@ class HTMLwriter(object):
 	songListFooter = '''
 								</ul><!-- /list-group -->
 							</div><!-- /panel -->
-						</div><!-- /col-md-7 -->
+						</div><!-- /col-md-6
+						 -->
 					
 					'''
 

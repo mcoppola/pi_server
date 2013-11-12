@@ -1,2 +1,14 @@
-2013-09-02 14:23:20.418695,sounds,jack,ptf commit,Renamed Playlists
-2013-09-01 11:17:53.771751,Balled,mc,ptx commit,Mixed programmed drums.  Added groups.
+2013-11-11-20-32-27,museyroom,Ballad,mc,ptx commit,Comped Vocals on second verse. Finished accoustic drum edit + comp until bridge.
+2013-11-10-20-31-12,museyroom,Bedroom,mc,ptx commit,Accoustic drum editing.  Not Finished.
+2013-11-07-11-17-32,museyroom,Ballad,ben,ptx commit,Mixed programmed drums.  Added drum groups El D and Ac D.
+2013-11-6-18-34-20,museyroom,Bedroom,ben,ptx commit,Edits for accoustic guitars for part A.
+2013-10-22-14-23-29,museyroom,Siren End,jack,ptf commit,Renamed Playlists
+2013-10-2-19-00-10,museyroom,Bedroom,mc,ptx commit,Percussion Overdubs. Mostly finished with comped. 
+2013-09-11-19-21-20,museyroom,Bedroom,mc,ptx commit,Cleaned up session according to doc standards.  
+2013-09-08-14-17-32,museyroom,Ballad,ben,ptx commit,Accoustic guitars comped and eddited. Ice Blue!
+2013-09-02-16-12-22,museyroom,Ballad,mc,ptx commit,Changed arrangment on beginning so accoustic drums come in with vocal.
+2013-08-22-18-12-22,museyroom,Ballad,mc,ptx commit,Comped vocals for bridge A.  Comped vocals for vamp/outro.
+2013-08-21-12-12-22,museyroom,Ballad,ben,ptx commit,Comped piano in second verse.  Added guitar fx in reason.
+2013-08-19-14-23-29,museyroom,Siren End,mc,ptf commit,Finished e-drum comp. May need more percussion.
+2013-08-6-18-34-20,museyroom,Bedroom,ben,ptx commit,Vocals "ahhs" edited and layered.  Also "oos" in same part.
+2013-08-4-15-31-48,museyroom,Bedroom,mc,ptx commit,E-drums mostly edited. Printed kick and clap sounds.
