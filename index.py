@@ -169,7 +169,8 @@ def printGenDirectory(account, loc):
 	for l in logLines:
 		log = l.split(',')
 		if (len(log) > 0):
-			fl.write(html.notification(user, log, timeSinceNow(log[0])))
+			if (log[1] == account):
+				fl.write(html.notification(user, log, timeSinceNow(log[0])))
 	fl.write(html.notesListFooter + html.linksListHeader(account))
 
 	# write all links
@@ -197,7 +198,7 @@ def printProToolsDirectory(account, loc):
 		loca = loc
 	for top, dirs, files in os.walk('data/' + account + '/' + loc ):
 		count = 0
-		fl.write('<ul>')
+		fl.write('<ul style="margin-left:-44px">')
 		for f in dirs:
 			fl.write(html.folderItem(account, loca, f))
 		fl.write('</ul> <ol>')
@@ -208,33 +209,33 @@ def printProToolsDirectory(account, loc):
 
 			if f.endswith('.ptx'):
 				if (notesForFile(user, account, loc, f)):
-					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '"style="margin-left:6px"><i style="color:#F2522E" class="glyphicon glyphicon-flag"></i>' + '<font style="margin-left:4px" color="#66CCFF">'
+					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '"style="margin-left:-38px"><i style="color:#F2522E" class="glyphicon glyphicon-flag"></i>&nbsp' + '<font style="margin-left:4px" color="#66CCFF">'
 						+ f + '</a></font>' + ' | '
 						+ str(size/1024/1024) + ' MB' +  ' | '
 						+ str(date) + '<br>' + '\n')
 				else:
-					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#66CCFF">'
+					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:-15px">' + '<font color="#66CCFF">'
 						+ f + '</a></font>' + ' | '
 						+ str(size/1024/1024) + ' MB' +  ' | '
 						+ str(date) + '<br>' + '\n')
 			elif f.endswith('.ptf'):
 				if (notesForFile(user, account, loc, f)):
-					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '"style="margin-left:6px"><i style="color:#F2522E" class="glyphicon glyphicon-flag"></i>' + '<font style="margin-left:4px" color="#6699FF">'
+					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '"style="margin-left:-38px"><i style="color:#F2522E" class="glyphicon glyphicon-flag"></i>&nbsp' + '<font style="margin-left:4px" color="#6699FF">'
 						+ f + '</a></font>' + ' | '
 						+ str(size/1024/1024) + ' MB' +  ' | '
 						+ str(date) + '<br>' + '\n')
 				else:
-					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#6699FF">'
+					fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:-15px">' + '<font color="#6699FF">'
 						+ f + '</a></font>' + ' | '
 						+ str(size/1024/1024) + ' MB' +  ' | '
 						+ str(date) + '<br>' + '\n')
 			elif f.endswith('.zip'):
-				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#00CC99">'
+				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:-15px">' + '<font color="#00CC99">'
 					+ f + '</a></font>' + ' | '
 					+ str(size/1024/1024) + ' MB' +  ' | '
 					+ str(date) + '<br>' + '\n')
 			else:
-				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:24px">' + '<font color="#999">'
+				fl.write('<a href="/'+ account + '/down/' + loca + str(count) + '" style="margin-left:-15px">' + '<font color="#999">'
 					+ f + '</a></font>' + ' | '
 					+ str(size/1024/1024) + ' MB' +  ' | '
 					+ str(date) + '<br>' + '\n')
@@ -485,8 +486,8 @@ def downloadHACK(account, loc, loc2, num):
 def ptKeeperDemo(num):
 	if num == 8320620:
 		global loggedIn, user, access
-		loggedIn = 'museyroom'
-		user = 'museyroom'
+		loggedIn = 'mc'
+		user = 'mc'
 		access = False
 		redirect('/account/museyroom')
 	else:
@@ -581,7 +582,7 @@ def removeLink(account, i):
 	file.close()
 	redirect('/account/%s' % account)
 
-@route('/removeNotification/<date>/<previous:path>')
+@route('/removeNotification/<date>/<previous>')
 def removeNotification(date, previous):
 	global user
 	checkLogin(user)
@@ -596,7 +597,7 @@ def removeNotification(date, previous):
 	for note in notes:
 		file.write(note + '\n')
 	file.close()
-	redirect('%s' % previous)
+	redirect('/account/%s' % previous)
 
 
 
@@ -664,7 +665,7 @@ def logger(action, loc, account, message='', filename=''):
 #locActions (action: description)
 logActions = {'addPTX': 'ptx commit', 'addPTF': 'ptf commit', 'addSong': 'new song'}
 #groups (user: [groups])
-groups = {'null':[], 'ben':['museyroom'], 'mc':['wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['david', 'drunken_bear', 'caddy'], 'owen':['owen', 'drunken_bear', 'wellboys'], 'caddy':['caddy']}
+groups = {'null':[], 'ben':['museyroom'], 'mc':['wellboys','museyroom', 'caddy', 'drunken_bear'], 'david':['drunken_bear', 'caddy'], 'owen':['drunken_bear', 'wellboys'], 'caddy':['caddy']}
 users = open('site/users.txt', 'r').read().splitlines()
 passwords = open('site/passwords.txt', 'r').read().splitlines()
 html = HTMLwriter()

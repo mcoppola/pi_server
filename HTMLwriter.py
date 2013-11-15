@@ -77,7 +77,7 @@ class HTMLwriter(object):
 			              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-plus"></i></b></a>
 			              <ul class="dropdown-menu">
 			              	<li role="presentation" class="dropdown-header">Add</li>
-			                <li><a href="#">Song</a></li>
+			                <li><a data-toggle="modal" href="#newSongForm">Song</a></li>
 			                <li><a href="#">Collaborator</a></li>
 			              </ul>
 			            </li>
@@ -186,7 +186,7 @@ class HTMLwriter(object):
 	# Log array = [time, group, song-commited-to, user-who-commited, action, message]
 	def notification(self, user, log, time):
 		return '''	<div class="panel-body" style="padding:10px">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="removeNotification('%s');">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="removeNotification('%s', '%s');">
 					&times;
 					</button>
 					<p style="font-size:meduim"><a class="alert-link" href="/account/%s"><font color="#3AA4FF">%s</font></a>,     <!--/.group -->
@@ -198,7 +198,7 @@ class HTMLwriter(object):
 					<p style="font-size:small">
 					<a class="alert-link" href="/user/%s"><font color="#F2522E">%s</font></a>: %s</p><!--/.message -->
 					</div>
-				''' % (log[0], log[1], log[1], log[1], log[2], log[2], log[4], time, log[3], log[3], log[5])
+				''' % (log[0], log[1], log[1], log[1], log[1], log[2], log[2], log[4], time, log[3], log[3], log[5])
 
 	def notificationLatest(self, user, log, time):
 		return '''	<div class="panel-body" style="padding:10px">
@@ -497,9 +497,9 @@ class HTMLwriter(object):
 						{
 						window.location.replace("/removeLink/" + account + "/" + i);
 						}
-						function removeNotification(date)
+						function removeNotification(date, account)
 						{
-						window.location.replace("/removeNotification/" + date + "/" + document.URL);
+						window.location.replace("/removeNotification/" + date + "/" + account;
 						}
 					</script>					
   				</body>
